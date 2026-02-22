@@ -1,0 +1,139 @@
+<div class="header-container">
+  <div class="header-info">
+    <h2 class="title">Casos Activos</h2>
+    <p class="subtitle">Gestiona las solicitudes activas de la Mesa de Ayuda</p>
+  </div>
+
+  <div class="header-actions">
+    <button mat-stroked-button color="primary" [matMenuTriggerFor]="filterMenu" class="btn-filter blue">
+      <mat-icon>filter_list</mat-icon>
+      Filtros
+      <span class="badge-count" *ngIf="q || status !== 'TODOS' || categoria !== 'TODAS'">!</span>
+    </button>
+    <button mat-icon-button (click)="loadTickets()" matTooltip="Actualizar">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+</div>
+
+<mat-menu #filterMenu="matMenu" class="custom-filter-menu" xPosition="before">
+  <div class="menu-content" (click)="$event.stopPropagation()">
+    <h4 class="menu-title">Filtrar búsqueda</h4>
+    <mat-form-field appearance="outline" class="f-compact">
+      <mat-label>Palabra clave</mat-label>
+      <input matInput [(ngModel)]="q" (ngModelChange)="applyFilter()" placeholder="ID, correo...">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="f-compact">
+      <mat-label>Estado</mat-label>
+      <mat-select [(ngModel)]="status" (selectionChange)="applyFilter()">
+        <mat-option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="f-compact">
+      <mat-label>Categoría</mat-label>
+      <mat-select [(ngModel)]="categoria" (selectionChange)="applyFilter()">
+        <mat-option value="TODAS">Todas</mat-option>
+        <mat-option *ngFor="let c of categoriaOptions" [value]="c">{{ c }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div class="date-row">
+      <mat-form-field appearance="outline" class="f-compact">
+        <mat-label>Desde</mat-label>
+        <input matInput [matDatepicker]="f" [(ngModel)]="fromDate" (dateChange)="applyFilter()">
+        <mat-datepicker-toggle matSuffix [for]="f"></mat-datepicker-toggle>
+        <mat-datepicker #f></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="f-compact">
+        <mat-label>Hasta</mat-label>
+        <input matInput [matDatepicker]="t" [(ngModel)]="toDate" (dateChange)="applyFilter()">
+        <mat-datepicker-toggle matSuffix [for]="t"></mat-datepicker-toggle>
+        <mat-datepicker #t></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="menu-footer">
+      <mat-slide-toggle [(ngModel)]="hideArchived" (change)="applyFilter()" color="primary">
+        Ocultar archivados
+      </mat-slide-toggle>
+      <button mat-button (click)="clearFilters()">Limpiar</button>
+    </div>
+  </div>
+</mat-menu>
+
+<mat-card class="card table-card">
+  <div class="loading-overlay" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="view" class="modern-table">
+      
+      <ng-container matColumnDef="sla">
+        <th mat-header-cell *matHeaderCellDef> SLA </th>
+        <td mat-cell *matCellDef="let t">
+          <div class="sla-dot" [ngClass]="getSlaClass(t.horasRestantes)" [matTooltip]="'Vence en ' + t.horasRestantes + 'h'"></div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let t"> <span class="id-tag">{{ t.id }}</span> </td>
+      </ng-container>
+
+      <ng-container matColumnDef="categoria">
+        <th mat-header-cell *matHeaderCellDef> Categoría </th>
+        <td mat-cell *matCellDef="let t"> {{ t.categoria }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="correo">
+        <th mat-header-cell *matHeaderCellDef> Cliente </th>
+        <td mat-cell *matCellDef="let t" class="email-cell"> {{ t.correo }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <td mat-cell *matCellDef="let t">
+          <span class="status-badge" [ngClass]="'status-' + (t.estado || '').toLowerCase()">
+            {{ statusLabel(t.estado) }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="area">
+        <th mat-header-cell *matHeaderCellDef> Área Asignada </th>
+        <td mat-cell *matCellDef="let t">
+          <mat-select [value]="t.area" (selectionChange)="transferirTicket(t.id, $event.value)" class="small-select">
+            <mat-option *ngFor="let a of areaOptions" [value]="a">{{ a }}</mat-option>
+          </mat-select>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actualizado">
+        <th mat-header-cell *matHeaderCellDef> Actualizado </th>
+        <td mat-cell *matCellDef="let t"> {{ t.actualizadoEn | date:'dd MMM' }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef class="text-right"> Acciones </th>
+        <td mat-cell *matCellDef="let t">
+          <div class="actions-buttons">
+            <button mat-stroked-button color="primary" (click)="open(t.id)" class="btn-text blue">
+              GESTIONAR
+            </button>
+            <button mat-stroked-button color="warn" (click)="archive(t.id)" [disabled]="t.estado === 'ARCHIVADO'" class="btn-text red">
+              ARCHIVAR
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div class="empty-state" *ngIf="!loading && view.length === 0">
+      <mat-icon>search_off</mat-icon>
+      <p>No hay tickets para mostrar.</p>
+    </div>
+  </div>
+</mat-card>

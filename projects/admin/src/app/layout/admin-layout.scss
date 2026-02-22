@@ -1,0 +1,149 @@
+// Paleta Grises Minimalistas (Neutros)
+$gray-white: #ffffff;
+$gray-light: #f5f5f5;
+$gray-border: #e5e5e5;
+$gray-text-dark: #171717;
+$gray-text-soft: #737373;
+$accent-purple: #2563eb;
+$accent-orange: #f97316;
+
+.shell {
+  display: flex;
+  height: 100vh;
+  background: $gray-white;
+  font-family: 'Inter', sans-serif;
+}
+
+// SIDEBAR: Degradado de Gris Blanco a Gris Suave
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, $gray-light 0%, #eeeeee 100%);
+  color: $gray-text-dark;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border-right: 1px solid $gray-border;
+
+  .sidebar-header {
+    height: 70px; padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .logo-box {
+    display: flex; align-items: center; gap: 10px;
+    .logo-icon {
+      background: $gray-text-dark;
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      mat-icon { font-size: x-large; color: white; }
+    }
+  }
+
+  .toggle-btn {
+    background: transparent; border: none; color: $gray-text-soft;
+    cursor: pointer; &:hover { color: $gray-text-dark; }
+  }
+
+  .nav-section { flex: 1; padding: 10px 0; }
+
+  .group-label {
+    padding: 15px 24px; font-size: 10px; font-weight: 800; 
+    color: #a3a3a3; letter-spacing: 1.2px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; margin: 4px 16px; padding: 12px 16px;
+    border-radius: 12px; color: $gray-text-soft; text-decoration: none; transition: 0.2s;
+
+    .icon-wrapper { margin-right: 12px; display: flex; }
+    .nav-label { font-size: 14px; font-weight: 600; flex: 1; }
+    .nav-count { font-size: 11px; background: rgba(0,0,0,0.05); padding: 6px 8px; border-radius: 6px; }
+
+    &:hover { background: rgba(0,0,0,0.03); color: $gray-text-dark; }
+
+    &.active {
+      background: $gray-white;
+      color: $accent-purple;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      .icon-wrapper mat-icon { font-size: x-large; color: $accent-purple; }
+    }
+  }
+}
+
+// FOOTER
+.sidebar-footer {
+  padding: 20px; border-top: 1px solid rgba(0,0,0,0.05);
+  .user-pill {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 15px;
+    .avatar { 
+      width: 38px; height: 38px; background: $gray-text-dark; color: white;
+      border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; 
+    }
+    .u-name { display: block; font-size: 13px; font-weight: 700; color: $gray-text-dark; }
+    .u-role { font-size: 11px; color: $gray-text-soft; }
+  }
+}
+
+.btn-logout {
+  width: 100%; padding: 10px; border-radius: 10px; background: transparent;
+  border: 1px solid $gray-border; color: $gray-text-soft;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; font-weight: 600;
+  &:hover { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
+}
+
+// MAIN CONTENT
+.main-content {
+  flex: 1; background: $gray-white; display: flex; flex-direction: column;
+}
+
+.top-nav {
+  height: 60px; padding: 0 30px; display: flex; align-items: center;
+  background: $gray-white; border-bottom: 1px solid $gray-border;
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px; color: $gray-text-soft; font-size: 16px;
+    .current { color: $gray-text-dark; font-weight: 700; }
+  }
+}
+
+mat-icon{
+  font-size: x-large !important;
+}
+
+.viewport { flex: 1; overflow-y: auto; }
+
+// COLLAPSED
+.shell.collapsed {
+  .sidebar {
+    width: 80px;
+    .nav-label, .group-label, .u-meta, .nav-count { display: none; }
+    .nav-item { margin: 8px; justify-content: center; .icon-wrapper { margin: 0; } }
+    .sidebar-header, .user-pill { justify-content: center; }
+  }
+}
+
+.logo-text {
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: grey;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+
+  .brand-group {
+    display: flex;
+  }
+
+  .red-text {
+    color: #e11d48;
+  }
+
+  .blue-text {
+    color: #2563eb;
+  }
+}
+
+.shell.collapsed .logo-text {
+  display: none; 
+}

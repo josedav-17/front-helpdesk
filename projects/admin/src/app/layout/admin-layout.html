@@ -1,0 +1,60 @@
+<div class="shell" [class.collapsed]="isCollapsed">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-box" (click)="toggleSidebar()" role="button">
+        <div class="logo-icon">
+          <mat-icon>school</mat-icon>
+        </div>
+        <div class="logo-text">
+          HELPDESK-<span class="brand-group">
+            <span class="red-text">IU</span><span class="blue-text">D</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="nav-section">
+      <div class="group-label" *ngIf="!isCollapsed">SISTEMA</div>
+
+      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active"
+         [matTooltip]="isCollapsed ? 'Dashboard' : ''" matTooltipPosition="right">
+        <div class="icon-wrapper"><mat-icon>grid_view</mat-icon></div>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+      <a class="nav-item" routerLink="/tickets" routerLinkActive="active"
+         [matTooltip]="isCollapsed ? 'Gestión de Tickets' : ''" matTooltipPosition="right">
+        <div class="icon-wrapper"><mat-icon>confirmation_number</mat-icon></div>
+        <span class="nav-label">Gestión de Tickets</span>
+        <span class="nav-count" *ngIf="!isCollapsed">6</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-pill" *ngIf="!isCollapsed">
+        <div class="avatar">AD</div>
+        <div class="u-meta">
+          <span class="u-name">Admin User</span>
+          <span class="u-role">Administrador</span>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span *ngIf="!isCollapsed">Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-nav">
+      <div class="breadcrumb">
+        <mat-icon>home</mat-icon>
+        <span class="sep">/</span>
+        <span class="current">Tickets</span>
+      </div>
+    </header>
+    <div class="viewport">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

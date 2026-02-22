@@ -1,0 +1,90 @@
+<div class="main-wrapper">
+
+  <div class="loader-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando información del ticket...</p>
+  </div>
+
+  <mat-card class="detail-card" *ngIf="!loading && ticket">
+    
+    <div class="header">
+      <div class="header-left">
+        <div class="sla-status" [ngClass]="getSlaClass(ticket.horasRestantes)" [matTooltip]="'Vence en ' + ticket.horasRestantes + ' horas'"></div>
+        <div>
+          <h1 class="main-title">Gestión de Caso</h1>
+          <div class="badges">
+            <span class="badge-id">ID: {{ ticket.id }}</span>
+            <span class="badge-cat">{{ ticket.categoria }}</span>
+          </div>
+        </div>
+      </div>
+      <button mat-stroked-button (click)="back()">
+        <mat-icon>arrow_back</mat-icon> Regresar
+      </button>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="main-grid">
+      
+      <div class="data-col">
+        <mat-card class="sub-card shadow-none border">
+          <h3 class="sub-title"><mat-icon>account_circle</mat-icon> Contacto del Solicitante</h3>
+          
+          <div class="info-group">
+            <p><b>Nombre:</b> {{ ticket.nombre }}</p>
+            <p><b>Documento:</b> {{ ticket.documento }}</p>
+            <p><b>Email:</b> <span class="text-blue">{{ ticket.correo }}</span></p>
+            
+            <p class="phone-line">
+              <b>Teléfono:</b> {{ ticket.telefono }}
+              <span class="whatsapp-badge" *ngIf="ticket.tieneWhatsapp" matTooltip="Cuenta con WhatsApp">
+                <mat-icon class="ws-icon">chat</mat-icon> WhatsApp
+              </span>
+              <span class="no-whatsapp-badge" *ngIf="!ticket.tieneWhatsapp">
+                Sin WhatsApp
+              </span>
+            </p>
+          </div>
+        </mat-card>
+
+        <mat-card class="sub-card shadow-none border">
+          <h3 class="sub-title"><mat-icon>description</mat-icon> Descripción del Caso</h3>
+          <div class="box-desc">{{ ticket.descripcion }}</div>
+        </mat-card>
+      </div>
+
+      <div class="action-col" *ngIf="form" [formGroup]="form">
+        <mat-card class="sub-card shadow-none border management-card">
+          <h3 class="sub-title"><mat-icon>assignment</mat-icon> Panel de Gestión</h3>
+          
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="estado">
+              <mat-option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Prioridad</mat-label>
+            <mat-select formControlName="prioridad">
+              <mat-option *ngFor="let p of priorityOptions" [value]="p">{{ p }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Redactar Respuesta</mat-label>
+            <textarea matInput rows="4" formControlName="respuesta" placeholder="Instrucciones para el cliente..."></textarea>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" class="w-100 btn-action" (click)="save()" [disabled]="form.invalid || saving">
+            <mat-icon>{{ saving ? 'sync' : 'save' }}</mat-icon>
+            {{ saving ? 'PROCESANDO...' : 'ACTUALIZAR Y NOTIFICAR' }}
+          </button>
+        </mat-card>
+      </div>
+
+    </div>
+  </mat-card>
+
+</div>

@@ -1,0 +1,45 @@
+<div class="login-screen">
+  <div class="login-box">
+    
+    <div class="login-header">
+      <div class="icon-circle">
+        <span class="material-icons-outlined">support_agent</span>
+      </div>
+      <h1>Helpdesk</h1>
+      <p>Panel Administrativo</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      
+      <div class="form-group">
+        <label>Usuario</label>
+        <div class="input-control">
+          <input type="text" formControlName="user" placeholder="Ingresa tu usuario">
+          <span class="material-icons-outlined icon-suffix">person</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <div class="input-control">
+          <input [type]="hide ? 'password' : 'text'" formControlName="pass" placeholder="••••••••">
+          <span 
+            class="material-icons-outlined icon-suffix" 
+            (click)="hide = !hide" 
+            style="cursor: pointer;">
+            {{hide ? 'visibility_off' : 'visibility'}}
+          </span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="form.invalid">
+        Entrar al Sistema
+      </button>
+
+      <div class="demo-tag">
+        Demo: <b>admin / admin123</b>
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+.card {
+  margin-bottom: 16px;
+  border-radius: 16px;
+}
+
+.grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.success {
+  border-left: 6px solid #2e7d32;
+}
+
+.ticket {
+  margin: 8px 0 0;
+  letter-spacing: 2px;
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

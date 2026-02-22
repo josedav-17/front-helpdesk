@@ -1,0 +1,35 @@
+.card {
+  margin-bottom: 16px;
+  border-radius: 16px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 14px;
+}
+
+.full {
+  flex: 1 1 auto;
+}
+
+.kv .line {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+  align-items: center;
+}
+
+.warn {
+  border-left: 6px solid #ed6c02;
+}
+
+@media (max-width: 720px) {
+  .row {
+    flex-direction: column;
+  }
+  button {
+    width: 100%;
+  }
+}

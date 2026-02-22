@@ -1,0 +1,51 @@
+<mat-card class="card">
+  <mat-card-title>Consultar ticket</mat-card-title>
+  <mat-card-subtitle>Ingresa tu Ticket ID para ver el estado.</mat-card-subtitle>
+
+  <form [formGroup]="form" (ngSubmit)="search()" class="row">
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Ticket ID</mat-label>
+      <input matInput formControlName="id" placeholder="Ej: TCK-ABC123" />
+      <mat-error *ngIf="form.controls.id.invalid">Requerido</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" [disabled]="form.invalid || loading">
+      {{ loading ? 'Consultando...' : 'Consultar' }}
+    </button>
+  </form>
+</mat-card>
+
+<mat-card *ngIf="ticket" class="card">
+  <mat-card-title>Resultado</mat-card-title>
+
+  <mat-card-content class="kv">
+    <div class="line">
+      <b>Ticket:</b>
+      <span>{{ ticket.id }}</span>
+    </div>
+
+    <div class="line">
+      <b>Estado:</b>
+      <mat-chip-set>
+        <mat-chip>{{ statusLabel() }}</mat-chip>
+      </mat-chip-set>
+    </div>
+
+    <div class="line">
+      <b>Categoría:</b>
+      <span>{{ ticket.categoria }}</span>
+    </div>
+
+    <div class="line">
+      <b>Actualizado:</b>
+      <span>{{ ticket.actualizadoEn | date:'medium' }}</span>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="notFound" class="card warn">
+  <mat-card-title>No encontrado</mat-card-title>
+  <mat-card-content>
+    No existe un ticket con ese ID. Verifica el código e intenta de nuevo.
+  </mat-card-content>
+</mat-card>

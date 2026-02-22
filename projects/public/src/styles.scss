@@ -1,0 +1,27 @@
+/* You can add global styles to this file, and also import other style files */
+/* ====== THEME ====== */
+
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+
+  --bg-app: #f4f6f9;
+  --bg-card: #ffffff;
+
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+
+  --border: rgba(0, 0, 0, 0.06);
+}
+
+/* Reset */
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Roboto, Arial, sans-serif;
+  background: var(--bg-app);
+  color: var(--text-main);
+}

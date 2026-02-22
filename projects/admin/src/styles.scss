@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons+Outlined');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+:root {
+  /* Paleta Neutra (Escala de Grises Técnica) */
+  --slate-50: #f8fafc;
+  --slate-200: #e2e8f0;
+  --slate-400: #94a3b8;
+  --slate-600: #475569;
+  --slate-900: #0f172a;
+  
+  /* Semántica */
+  --primary: #2563eb;
+  --success: #16a34a;
+  --warning: #d97706;
+  
+  /* Layout */
+  --sidebar-width: 260px;
+  --radius: 8px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+html, body { height: 100%; margin: 0; padding: 0; }
+
+html, body {
+  width: 100vw;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: white;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+/* Fix para que los iconos no se vean como letras amontonadas */
+.material-icons-outlined, .mat-icon {
+  font-family: 'Material Icons Outlined' !important;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Evita que los inputs de Material se estiren infinito */
+.mat-mdc-form-field {
+  width: 100%;
+  max-width: 400px;
+}
