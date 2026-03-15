@@ -82,10 +82,8 @@
             "tsConfig": "projects/admin/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "projects/admin/public"
-              }
+              "projects/admin/src/favicon.ico",
+              "projects/admin/src/assets"
             ],
             "styles": [
               "projects/admin/src/styles.scss"

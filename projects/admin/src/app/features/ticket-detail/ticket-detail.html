@@ -1,90 +1,94 @@
-<div class="main-wrapper">
-
-  <div class="loader-container" *ngIf="loading">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p>Cargando información del ticket...</p>
-  </div>
-
-  <mat-card class="detail-card" *ngIf="!loading && ticket">
+<div class="page-container" *ngIf="!loading && ticket">
+  <div class="main-grid">
     
-    <div class="header">
-      <div class="header-left">
-        <div class="sla-status" [ngClass]="getSlaClass(ticket.horasRestantes)" [matTooltip]="'Vence en ' + ticket.horasRestantes + ' horas'"></div>
-        <div>
-          <h1 class="main-title">Gestión de Caso</h1>
-          <div class="badges">
-            <span class="badge-id">ID: {{ ticket.id }}</span>
-            <span class="badge-cat">{{ ticket.categoria }}</span>
-          </div>
+    <aside class="left-col">
+      <div class="card profile-card">
+        <button type="button" class="btn-back-action" (click)="back()">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Volver a la consola</span>
+        </button>
+
+        <div class="avatar">{{ ticket.nombre?.charAt(0) }}</div>
+        <h2 class="name">{{ ticket.nombre }}</h2>
+        <p class="email">{{ ticket.correo }}</p>
+        <div class="contacts">
+          <p><mat-icon>smartphone</mat-icon> {{ ticket.telefono }}</p>
+          <p class="wa"><mat-icon>verified</mat-icon> WhatsApp disponible</p>
         </div>
       </div>
-      <button mat-stroked-button (click)="back()">
-        <mat-icon>arrow_back</mat-icon> Regresar
-      </button>
-    </div>
 
-    <mat-divider></mat-divider>
+      <div class="card data-card">
+        <label class="section-label">DATOS DEL TICKET</label>
+        <div class="info-row"><span>ID Registro</span> <b>{{ ticket.label }}</b></div>
+        <div class="info-row"><span>Estado DB</span> <b>{{ ticket.estado_db }}</b></div>
+        <div class="info-row"><span>Prioridad</span> <b>{{ ticket.prioridad_nom }}</b></div>
+        <div class="info-row"><span>IP</span> <span>{{ ticket.ip_registro }}</span></div>
+      </div>
+    </aside>
 
-    <div class="main-grid">
-      
-      <div class="data-col">
-        <mat-card class="sub-card shadow-none border">
-          <h3 class="sub-title"><mat-icon>account_circle</mat-icon> Contacto del Solicitante</h3>
-          
-          <div class="info-group">
-            <p><b>Nombre:</b> {{ ticket.nombre }}</p>
-            <p><b>Documento:</b> {{ ticket.documento }}</p>
-            <p><b>Email:</b> <span class="text-blue">{{ ticket.correo }}</span></p>
-            
-            <p class="phone-line">
-              <b>Teléfono:</b> {{ ticket.telefono }}
-              <span class="whatsapp-badge" *ngIf="ticket.tieneWhatsapp" matTooltip="Cuenta con WhatsApp">
-                <mat-icon class="ws-icon">chat</mat-icon> WhatsApp
-              </span>
-              <span class="no-whatsapp-badge" *ngIf="!ticket.tieneWhatsapp">
-                Sin WhatsApp
-              </span>
-            </p>
+    <main class="center-col">
+      <div class="card info-card">
+        <div class="ticket-header-meta">
+          <span class="type-tag">{{ ticket.categoria }}</span>
+          <span class="date-tag">{{ ticket.creado_en | date:'dd/MM/yyyy, h:mm a' }}</span>
+        </div>
+        <!-- <h1 class="main-title">{{ ticket.asunto }}</h1> -->
+        <div class="user-desc">
+          <label>DESCRIPCIÓN DEL USUARIO</label>
+          <p>{{ ticket.descripcion }}</p>
+        </div>
+      </div>
+
+      <div class="card form-card" [formGroup]="form">
+        <label class="section-label">GESTIÓN Y RESPUESTA</label>
+        <div class="form-grid">
+          <div class="f-group">
+            <label>Estado</label>
+            <select formControlName="estado">
+              <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+            </select>
           </div>
-        </mat-card>
-
-        <mat-card class="sub-card shadow-none border">
-          <h3 class="sub-title"><mat-icon>description</mat-icon> Descripción del Caso</h3>
-          <div class="box-desc">{{ ticket.descripcion }}</div>
-        </mat-card>
-      </div>
-
-      <div class="action-col" *ngIf="form" [formGroup]="form">
-        <mat-card class="sub-card shadow-none border management-card">
-          <h3 class="sub-title"><mat-icon>assignment</mat-icon> Panel de Gestión</h3>
-          
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Estado</mat-label>
-            <mat-select formControlName="estado">
-              <mat-option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Prioridad</mat-label>
-            <mat-select formControlName="prioridad">
-              <mat-option *ngFor="let p of priorityOptions" [value]="p">{{ p }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Redactar Respuesta</mat-label>
-            <textarea matInput rows="4" formControlName="respuesta" placeholder="Instrucciones para el cliente..."></textarea>
-          </mat-form-field>
-
-          <button mat-raised-button color="primary" class="w-100 btn-action" (click)="save()" [disabled]="form.invalid || saving">
-            <mat-icon>{{ saving ? 'sync' : 'save' }}</mat-icon>
-            {{ saving ? 'PROCESANDO...' : 'ACTUALIZAR Y NOTIFICAR' }}
+          <div class="f-group">
+            <label>Prioridad</label>
+            <select formControlName="prioridad">
+              <option value="BAJA">Baja</option>
+              <option value="MEDIA">Media</option>
+              <option value="ALTA">Alta</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label>Área</label>
+            <select formControlName="area">
+              <option value="Soporte N1">Soporte N1</option>
+              <option value="Redes">Redes</option>
+            </select>
+          </div>
+          <div class="f-group full">
+            <label>Respuesta al usuario</label>
+            <textarea formControlName="respuesta" placeholder="Escriba la solución aquí..."></textarea>
+          </div>
+        </div>
+        <div class="footer">
+          <span><mat-icon>mail</mat-icon> Notificación automática</span>
+          <button class="btn-update" (click)="save()" [disabled]="form.invalid || saving">
+            <mat-icon *ngIf="!saving">send</mat-icon> ACTUALIZAR TICKET
           </button>
-        </mat-card>
+        </div>
       </div>
+    </main>
 
-    </div>
-  </mat-card>
+    <aside class="right-col">
+      <div class="card history-card">
+        <label class="section-label">HISTORIAL</label>
+        <div class="timeline" *ngIf="historial.length > 0">
+          <div class="log" *ngFor="let h of historial">
+            <div class="log-h"><b>{{ h.actor }}</b> <span>{{ h.fecha | date:'shortTime' }}</span></div>
+            <p>{{ h.accion }}</p>
+          </div>
+        </div>
+        <div class="empty" *ngIf="historial.length === 0">Sin movimientos aún.</div>
+      </div>
+    </aside>
 
+  </div>
 </div>

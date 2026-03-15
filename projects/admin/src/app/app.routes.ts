@@ -5,6 +5,7 @@ import { LoginComponent } from './features/login/login';
 import { TicketsListComponent } from './features/tickets-list/tickets-list';
 import { TicketDetailComponent } from './features/ticket-detail/ticket-detail';
 import { DashboardComponent } from './features/dashboard/dashboard'; 
+import { UsersManagementComponent } from './features/users-management/users-management';
 
 import { authGuard } from './core/auth/auth-guard';
 
@@ -17,6 +18,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'users', component: UsersManagementComponent },
       { path: 'tickets', component: TicketsListComponent },
       { path: 'tickets/:id', component: TicketDetailComponent },
     ],

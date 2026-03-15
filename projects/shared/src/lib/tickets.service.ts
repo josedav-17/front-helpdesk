@@ -1,174 +1,88 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
-import { Ticket } from '../models/ticket.model';
+import { Observable } from 'rxjs';
 
-export interface TicketCreateDto {
-  nombre: string;
-  email: string;
-  telefono: string;
-  tieneWhatsapp: boolean;
-  categoria: string;
-  asunto: string;
-  descripcion: string;
-  prioridad?: string;
-}
 
-/** Esto es EXACTAMENTE lo que devuelve fn_obtener_dashboard_tickets() */
-export interface TicketDashboardDto {
-  ticket_uuid: string;
-  label: string;
-  solicitante: string;
-  asunto_txt: string;
-  estado_nom: string;
-  estado_color: string;
-  prioridad_nom: string;
-  fecha_format: string;
-}
+import {
+  TicketCreatePayload,
+  TicketCreateResponse,
+  TicketConsultaPayload,
+  TicketConsultaResponse,
+  TicketMDA,
+} from '../models/ticket.model';
 
-export interface AsignarTicketDto {
-  agenteId: string;
-  motivo: string;
-}
-
-export interface TransferirTicketDto {
-  nuevaArea: string;
-  agenteId: string;
-  motivo: string;
-}
-
-export interface CancelarTicketDto {
-  motivo: string;
-  rol: 'USUARIO' | 'AGENTE';
-}
-
-export interface ReclasificarTicketDto {
-  nuevaPrioridad: string;
-  nuevaCategoria: string;
-  motivo: string;
-}
-
-export interface ReabrirTicketDto {
-  motivo: string;
-}
-
-export interface PausarTicketDto {
-  motivo: string;
-}
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class TicketsService {
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = 'http://127.0.0.1:8000/api/tickets';
 
-  /** Ajusta a tu environment si ya lo tienes */
-  private baseUrl = 'http://localhost:8000';
-  private api = `${this.baseUrl}/api`;
-
-  // ----------------------------
-  // PÚBLICO: Crear ticket
-  // ----------------------------
-  crear(payload: TicketCreateDto): Observable<{ message: string; label: string }> {
-    return this.http.post<{ message: string; label: string }>(
-      `${this.api}/tickets/public`,
-      payload
-    );
+  create(payload: TicketCreatePayload): Observable<TicketCreateResponse> {
+    return this.http.post<TicketCreateResponse>(`${this.baseUrl}/crear`, payload);
   }
 
-  // ----------------------------
-  // CONSULTA: Dashboard
-  // Devuelve Ticket[] (ViewModel)
-  // ----------------------------
-  dashboard(): Observable<Ticket[]> {
-    return this.http.get<TicketDashboardDto[]>(`${this.api}/tickets/dashboard`).pipe(
-      map(rows => rows.map(dto => this.mapDashboardDtoToTicket(dto)))
-    );
+  consultar(payload: TicketConsultaPayload): Observable<TicketConsultaResponse> {
+    return this.http.post<TicketConsultaResponse>(`${this.baseUrl}/consultar`, payload);
   }
 
-  // ----------------------------
-  // MESA DE AYUDA: SPs por UUID
-  // ----------------------------
-  asignar(ticketUuid: string, payload: AsignarTicketDto) {
-    return this.http.post<{ message: string }>(
-      `${this.api}/tickets/${ticketUuid}/asignar`,
-      payload
-    );
+  dashboard(): Observable<TicketMDA[]> {
+    return this.http.get<TicketMDA[]>(`${this.baseUrl}/dashboard`);
   }
 
-  transferir(ticketUuid: string, payload: TransferirTicketDto) {
-    return this.http.post<{ message: string }>(
-      `${this.api}/tickets/${ticketUuid}/transferir`,
-      payload
-    );
+  getById(ticketId: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${ticketId}`);
   }
 
-  cancelar(ticketUuid: string, payload: CancelarTicketDto) {
-    return this.http.post<{ message: string }>(
-      `${this.api}/tickets/${ticketUuid}/cancelar`,
-      payload
-    );
+  asignar(ticketId: string, agenteId: string, motivo: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/${ticketId}/asignar`, {
+      agenteId,
+      motivo,
+    });
   }
 
-  reclasificar(ticketUuid: string, payload: ReclasificarTicketDto) {
-    return this.http.post<{ message: string }>(
-      `${this.api}/tickets/${ticketUuid}/reclasificar`,
-      payload
-    );
+  transferir(
+    ticketId: string,
+    nuevaArea: string,
+    agenteId: string,
+    motivo: string
+  ): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/${ticketId}/transferir`, {
+      nuevaArea,
+      agenteId,
+      motivo,
+    });
   }
 
-  reabrir(ticketUuid: string, payload: ReabrirTicketDto) {
-    return this.http.post<{ message: string }>(
-      `${this.api}/tickets/${ticketUuid}/reabrir`,
-      payload
-    );
+  reclasificar(
+    ticketId: string,
+    nuevaPrioridad: string,
+    nuevaCategoria: string,
+    motivo: string
+  ): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/${ticketId}/reclasificar`, {
+      nuevaPrioridad,
+      nuevaCategoria,
+      motivo,
+    });
   }
 
-  pausar(ticketUuid: string, payload: PausarTicketDto) {
-    return this.http.post<{ message: string }>(
-      `${this.api}/tickets/${ticketUuid}/pausar`,
-      payload
-    );
+  pausar(ticketId: string, motivo: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/${ticketId}/pausar`, {
+      motivo,
+    });
   }
 
-  // ----------------------------
-  // Mapper: DTO (API) -> Ticket (UI)
-  // ----------------------------
-  private mapDashboardDtoToTicket(dto: TicketDashboardDto): Ticket {
-    return {
-      id: dto.ticket_uuid,
-      label: dto.label,
-      nombre: dto.solicitante,
-
-      // Estos no vienen del dashboard; se quedan opcionales
-      documento: '',
-      correo: '',
-      telefono: '',
-      categoria: '',
-
-      // En dashboard mostramos el asunto como “descripcion corta”
-      descripcion: dto.asunto_txt,
-
-      // Normalización de estado
-      estado: this.mapEstado(dto.estado_nom),
-
-      estadoDb: dto.estado_nom,
-      estadoColor: dto.estado_color,
-      prioridad: dto.prioridad_nom,
-
-      // La función ya devuelve texto formateado
-      creadoEn: dto.fecha_format,
-      actualizadoEn: dto.fecha_format
-    };
+  reabrir(ticketId: string, motivo: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/${ticketId}/reabrir`, {
+      motivo,
+    });
   }
 
-  private mapEstado(dbEstado: string): Ticket['estado'] {
-    const e = (dbEstado || '').toUpperCase();
-
-    // Ajusta según tus cat_estados reales
-    if (e === 'ABIERTO' || e === 'PENDIENTE') return 'PENDIENTE';
-    if (e === 'EN PROCESO' || e === 'EN_PROCESO') return 'EN_PROCESO';
-    if (e === 'CERRADO' || e === 'RESUELTO') return 'RESUELTO';
-    if (e === 'ARCHIVADO') return 'ARCHIVADO';
-
-    return 'PENDIENTE';
+  cancelar(ticketId: string, motivo: string, rol: 'USUARIO' | 'AGENTE'): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/${ticketId}/cancelar`, {
+      motivo,
+      rol,
+    });
   }
 }

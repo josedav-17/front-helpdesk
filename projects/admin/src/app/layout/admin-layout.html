@@ -28,6 +28,13 @@
         <span class="nav-label">Gestión de Tickets</span>
         <span class="nav-count" *ngIf="!isCollapsed">6</span>
       </a>
+
+      <a class="nav-item" routerLink="/users" routerLinkActive="active"
+         [matTooltip]="isCollapsed ? 'Gestión de Usuarios' : ''" matTooltipPosition="right">
+        <div class="icon-wrapper"><mat-icon>confirmation_number</mat-icon></div>
+        <span class="nav-label">Gestión de usuarios</span>
+      </a>
+
     </nav>
 
     <div class="sidebar-footer">

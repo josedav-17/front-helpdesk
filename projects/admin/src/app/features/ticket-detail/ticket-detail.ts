@@ -1,29 +1,18 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { Component, OnInit, OnDestroy, inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, Location, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, finalize } from 'rxjs';
 
-// Material Imports
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { TicketsService } from 'shared';
 
 @Component({
   selector: 'app-ticket-detail',
   standalone: true,
-  imports: [
-    CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, 
-    MatIconModule, MatDividerModule, MatFormFieldModule, MatSelectModule, 
-    MatInputModule, MatSnackBarModule, MatProgressSpinnerModule, MatTooltipModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatSnackBarModule],
   templateUrl: './ticket-detail.html',
   styleUrls: ['./ticket-detail.scss']
 })
@@ -32,86 +21,71 @@ export class TicketDetailComponent implements OnInit, OnDestroy {
   private snack = inject(MatSnackBar);
   private location = inject(Location);
   private route = inject(ActivatedRoute);
+  private api = inject(TicketsService);
+  private platformId = inject(PLATFORM_ID);
+  private cdr = inject(ChangeDetectorRef);
 
-  public ticket: any = null;
   public loading = true;
   public saving = false;
+  public ticket: any = null;
+  public historial: any[] = [];
   public form!: FormGroup;
-  private routeSub?: Subscription;
 
   public statusOptions = [
     { value: 'PENDIENTE', label: 'Pendiente' },
     { value: 'EN_PROCESO', label: 'En proceso' },
-    { value: 'RESUELTO', label: 'Resuelto' },
-    { value: 'ARCHIVADO', label: 'Archivado' }
+    { value: 'RESUELTO', label: 'Resuelto' }
   ];
 
-  public areaOptions = ['Soporte N1', 'Infraestructura', 'Sistemas Académicos', 'Bienestar', 'Admisiones'];
-  public priorityOptions = ['BAJA', 'MEDIA', 'ALTA', 'CRÍTICA'];
+  private sub?: Subscription;
 
   ngOnInit() {
-    this.routeSub = this.route.params.subscribe(params => {
+    if (!isPlatformBrowser(this.platformId)) return;
+    this.sub = this.route.params.subscribe(params => {
       const id = params['id'];
-      this.simulateTicketData(id);
+      if (id) this.fetchData(id);
     });
   }
 
-  private simulateTicketData(id: string) {
+  private fetchData(id: string) {
     this.loading = true;
-    
-    setTimeout(() => {
-      this.ticket = {
-        id: id || 'TCK-000',
-        nombre: 'Andrés Felipe Restrepo',
-        documento: '1020304050',
-        correo: 'a.restrepo@universidad.edu.co',
-        telefono: '+57 300 123 4567', // Nuevo campo
-        tieneWhatsapp: true,           // Nuevo campo
-        categoria: 'Plataforma Académica',
-        descripcion: `El usuario reporta problemas técnicos con el ID ${id}. Requiere asistencia inmediata para recuperar acceso.`,
-        estado: 'EN_PROCESO',
-        prioridad: 'ALTA',
-        area: 'Soporte N1',
-        creadoEn: new Date().toISOString(),
-        actualizadoEn: new Date().toISOString(),
-        horasRestantes: 4
-      };
-
-      this.initForm();
-      this.loading = false;
-    }, 250); 
+    this.api.getById(id).pipe(
+      finalize(() => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (res) => {
+        this.ticket = res.ticket;
+        this.historial = res.historial || [];
+        this.initForm();
+      },
+      error: () => this.snack.open('Error al cargar datos', 'Cerrar')
+    });
   }
 
   private initForm() {
     this.form = this.fb.group({
-      estado: [this.ticket.estado, Validators.required],
-      prioridad: [this.ticket.prioridad, Validators.required],
-      area: [this.ticket.area, Validators.required],
+      estado: [this.ticket?.estado_db || 'PENDIENTE', Validators.required],
+      prioridad: [this.ticket?.prioridad_nom || 'MEDIA', Validators.required],
+      area: [this.ticket?.area_asignada || 'Soporte N1', Validators.required],
       respuesta: ['', [Validators.required, Validators.minLength(5)]]
     });
   }
 
   public save() {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.saving) return;
     this.saving = true;
     setTimeout(() => {
       this.saving = false;
-      this.snack.open(`Ticket ${this.ticket.id} gestionado`, 'OK', { duration: 2000 });
-      this.back();
-    }, 800);
+      this.snack.open('Ticket actualizado', 'OK');
+      this.cdr.detectChanges();
+    }, 1500);
   }
 
   public back() { this.location.back(); }
 
-  public statusLabel(s: string) {
-    return this.statusOptions.find(o => o.value === s)?.label || s;
-  }
-
-  public getSlaClass(h: number) { 
-    return h <= 2 ? 'urgent' : h <= 8 ? 'warning' : 'ok'; 
-  }
-
   ngOnDestroy() {
-    this.routeSub?.unsubscribe();
+    this.sub?.unsubscribe();
   }
 }

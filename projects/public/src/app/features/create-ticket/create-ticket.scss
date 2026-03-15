@@ -1,35 +1,113 @@
-.card {
-  margin-bottom: 16px;
-  border-radius: 16px;
+$iud-dark: #051c2c; // Azul ultra oscuro del portal
+$iud-red: #d32f2f;
+$iud-cyan: #00bcd4;
+
+.iud-portal-container {
+  width: 100%;
+  min-height: 100vh;
+  background: $iud-dark; // Fondo oscuro para eliminar el "blanco de hospital"
+  color: white;
+  font-family: 'Montserrat', sans-serif;
 }
 
-.grid {
-  display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 14px;
+.hero-form-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 60px 20px;
 }
 
-.full {
-  grid-column: 1 / -1;
+.hero-text {
+  margin-bottom: 40px;
+  .tag { color: $iud-cyan; font-weight: 700; letter-spacing: 2px; font-size: 12px; }
+  h1 { font-size: 2.5rem; font-weight: 800; margin: 10px 0; }
+  p { opacity: 0.7; font-size: 1.1rem; }
 }
 
-.actions {
+.portal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-group-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.input-field {
+  display: flex;
+  flex-direction: column;
+  
+  label {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+  }
+
+  input, select, textarea {
+    background: rgba(255,255,255,0.05); // Input semi-transparente
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 14px;
+    color: white;
+    font-size: 15px;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      background: rgba(255,255,255,0.1);
+      border-color: $iud-cyan;
+      box-shadow: 0 0 15px rgba(0, 188, 212, 0.2);
+    }
+  }
+
+  &.full-width { width: 100%; }
+  &.grow-2 { flex: 2; min-width: 250px; }
+  &.grow-1 { flex: 1; min-width: 150px; }
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 10px;
+  ::ng-deep .mdc-label { color: white !important; }
+}
+
+.spacer-line {
+  height: 1px;
+  background: linear-gradient(90deg, $iud-cyan, transparent);
+  margin: 20px 0;
+}
+
+.form-footer {
   display: flex;
   justify-content: flex-end;
-}
+  gap: 20px;
+  margin-top: 30px;
 
-.success {
-  border-left: 6px solid #2e7d32;
-}
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 12px 25px;
+    cursor: pointer;
+    &:hover { background: rgba(255,255,255,0.05); }
+  }
 
-.ticket {
-  margin: 8px 0 0;
-  letter-spacing: 2px;
-}
-
-@media (max-width: 720px) {
-  .grid {
-    grid-template-columns: 1fr;
+  .btn-iud-red {
+    background: $iud-red;
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    font-weight: 800;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+    &:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(211, 47, 47, 0.4); }
   }
 }
+
+.asunto-bold { font-weight: 700; font-size: 1.2rem !important; }

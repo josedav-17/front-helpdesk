@@ -1,11 +1,14 @@
-<mat-toolbar color="primary" class="toolbar">
-  <span>Mesa de Ayuda</span>
-  <span class="spacer"></span>
-
-  <a mat-button routerLink="/solicitud">Registrar solicitud</a>
-  <a mat-button routerLink="/consulta">Consultar ticket</a>
+<mat-toolbar class="main-toolbar">
+  <div class="toolbar-container">
+    <span class="brand">Mesa de Ayuda</span>
+    <span class="spacer"></span>
+    <nav class="nav-links">
+      <a mat-button routerLink="/solicitud" routerLinkActive="active">Registrar solicitud</a>
+      <a mat-button routerLink="/consulta" routerLinkActive="active">Consultar ticket</a>
+    </nav>
+  </div>
 </mat-toolbar>
 
-<main class="container">
+<main class="content-area">
   <router-outlet></router-outlet>
 </main>

@@ -1,46 +1,104 @@
-export type TicketStatus = 'PENDIENTE' | 'EN_PROCESO' | 'RESUELTO' | 'ARCHIVADO';
+export type TicketStatus =
+  | 'ABIERTO'
+  | 'EN_PROCESO'
+  | 'PAUSADO'
+  | 'RESUELTO'
+  | 'CANCELADO'
+  | 'CERRADO';
+
+export type TicketTipo =
+  | 'PETICION'
+  | 'QUEJA'
+  | 'RECLAMO'
+  | 'SUGERENCIA'
+  | 'INCIDENTE'
+  | 'SOLICITUD'
+  | 'CONSULTA';
+
+export type TicketPrioridad =
+  | 'BAJA'
+  | 'MEDIA'
+  | 'ALTA'
+  | 'URGENTE';
 
 export interface Ticket {
-  /** UUID real (BD). Se usa para llamar SPs: /api/tickets/{uuid}/... */
   id: string;
-
-  /** Label visible para el usuario: TCK-XXXXXXX */
   label: string;
-
-  /** Nombre del solicitante (BD) */
+  tipo?: TicketTipo;
   nombre: string;
-
-  /** Datos opcionales (pueden venir vacíos si no están en el dashboard) */
   documento?: string;
   correo?: string;
   telefono?: string;
-
-  /** Categoria (puede venir vacía si dashboard no la trae) */
+  empresaDepartamento?: string;
   categoria?: string;
-
-  /** En dashboard, aquí puedes poner el asunto o un resumen */
+  subcategoria?: string;
+  asunto?: string;
   descripcion: string;
-
-  /** Estado normalizado para UI */
   estado: TicketStatus;
-
-  /** Nombre estado desde BD (ABIERTO/EN PROCESO/CERRADO/...) */
-  estadoDb: string;
-
-  /** Color del estado desde BD (hex) */
-  estadoColor: string;
-
-  /** Prioridad desde BD (MEDIA/ALTA/...) */
-  prioridad: string;
-
-  /** Fecha formateada (texto) */
+  prioridad: TicketPrioridad | string;
+  slaHoras?: number;
+  fechaLimiteSla?: string;
+  area?: string;
   creadoEn: string;
-  actualizadoEn: string;
+  actualizadoEn?: string;
 }
 
-/** Vista MDA (mesa de ayuda) - lo mantengo pero basado en Ticket */
 export interface TicketMDA extends Ticket {
   horasRestantes?: number;
-  area?: string;
+  slaVencido?: boolean;
   agenteNombre?: string | null;
+}
+
+export interface TicketCreatePayload {
+  nombre: string;
+  documento?: string | null;
+  email: string;
+  telefono?: string | null;
+  tieneWhatsapp?: boolean;
+  empresaDepartamento?: string | null;
+  tipo: TicketTipo;
+  categoria: string;
+  subcategoria?: string | null;
+  asunto?: string | null;
+  descripcion: string;
+  prioridad: TicketPrioridad | string;
+  areaAsignada?: string | null;
+}
+
+export interface TicketCreateResponse {
+  ticketUuid: string;
+  ticketLabel: string;
+  estado: string;
+  tipo: string;
+  prioridad: string;
+  slaHoras: number;
+  fechaCreacion: string;
+  fechaLimiteSla: string;
+  mensaje: string;
+}
+
+export interface TicketConsultaPayload {
+  label: string;
+  email: string;
+}
+
+export interface TicketConsultaPublica {
+  uuid: string;
+  ticket_label: string;
+  tipo_solicitud?: string;
+  categoria?: string;
+  subcategoria?: string;
+  asunto?: string;
+  descripcion_problema?: string;
+  area_asignada?: string;
+  estado?: string;
+  prioridad?: string;
+  sla_horas?: number;
+  creado_en?: string;
+  fecha_limite_sla?: string;
+}
+
+export interface TicketConsultaResponse {
+  ticket: TicketConsultaPublica | null;
+  historial?: any[];
 }

@@ -1,51 +1,82 @@
-<mat-card class="card">
-  <mat-card-title>Consultar ticket</mat-card-title>
-  <mat-card-subtitle>Ingresa tu Ticket ID para ver el estado.</mat-card-subtitle>
+<div class="track-container">
+  <div class="search-hero">
+    <div class="search-content">
+      <h1>Consultar Ticket</h1>
+      <p>Sigue el progreso de tu requerimiento institucional</p>
+      
+      <form [formGroup]="form" (ngSubmit)="search()" class="compact-search-bar">
+        <input type="text" formControlName="label" placeholder="ID del Ticket">
+        <input type="email" formControlName="email" placeholder="Correo electrónico">
+        <button type="submit" [disabled]="form.invalid || loading">
+          {{ loading ? '...' : 'BUSCAR' }}
+        </button>
+      </form>
+    </div>
+  </div>
 
-  <form [formGroup]="form" (ngSubmit)="search()" class="row">
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Ticket ID</mat-label>
-      <input matInput formControlName="id" placeholder="Ej: TCK-ABC123" />
-      <mat-error *ngIf="form.controls.id.invalid">Requerido</mat-error>
-    </mat-form-field>
-
-    <button mat-raised-button color="primary" [disabled]="form.invalid || loading">
-      {{ loading ? 'Consultando...' : 'Consultar' }}
-    </button>
-  </form>
-</mat-card>
-
-<mat-card *ngIf="ticket" class="card">
-  <mat-card-title>Resultado</mat-card-title>
-
-  <mat-card-content class="kv">
-    <div class="line">
-      <b>Ticket:</b>
-      <span>{{ ticket.id }}</span>
+  <div class="ticket-dashboard" *ngIf="ticket">
+    <div class="dashboard-header">
+      <div class="id-group">
+        <span class="label">RADICADO</span>
+        <span class="value">#{{ ticket.ticket_label }}</span>
+      </div>
+      <div class="status-pill" [attr.data-status]="ticket.estado">
+        {{ statusLabel(ticket.estado) }}
+      </div>
     </div>
 
-    <div class="line">
-      <b>Estado:</b>
-      <mat-chip-set>
-        <mat-chip>{{ statusLabel() }}</mat-chip>
-      </mat-chip-set>
-    </div>
+    <div class="data-grid">
+      <div class="data-tile">
+        <span class="tile-label">Asunto</span>
+        <span class="tile-value highlight">{{ ticket.asunto || '-' }}</span>
+      </div>
 
-    <div class="line">
-      <b>Categoría:</b>
-      <span>{{ ticket.categoria }}</span>
-    </div>
+      <div class="data-tile">
+        <span class="tile-label">Prioridad</span>
+        <span class="tile-value">{{ ticket.prioridad || '-' }}</span>
+      </div>
 
-    <div class="line">
-      <b>Actualizado:</b>
-      <span>{{ ticket.actualizadoEn | date:'medium' }}</span>
-    </div>
-  </mat-card-content>
-</mat-card>
+      <div class="data-tile">
+        <span class="tile-label">Área Asignada</span>
+        <span class="tile-value">{{ ticket.area_asignada || '-' }}</span>
+      </div>
 
-<mat-card *ngIf="notFound" class="card warn">
-  <mat-card-title>No encontrado</mat-card-title>
-  <mat-card-content>
-    No existe un ticket con ese ID. Verifica el código e intenta de nuevo.
-  </mat-card-content>
-</mat-card>
+      <div class="data-tile">
+        <span class="tile-label">Tipo</span>
+        <span class="tile-value">{{ ticket.tipo_solicitud || '-' }}</span>
+      </div>
+      <div class="data-tile">
+        <span class="tile-label">Categoría</span>
+        <span class="tile-value">{{ ticket.categoria || '-' }}</span>
+      </div>
+      <div class="data-tile">
+        <span class="tile-label">Subcategoría</span>
+        <span class="tile-value">{{ ticket.subcategoria || '-' }}</span>
+      </div>
+
+      <div class="data-tile col-span-3 desc-box">
+        <span class="tile-label">Descripción detallada</span>
+        <p class="tile-text">{{ ticket.descripcion_problema || '-' }}</p>
+      </div>
+
+      <div class="data-tile">
+        <span class="tile-label">Fecha Creación</span>
+        <span class="tile-value">{{ ticket.creado_en | date:'mediumDate' }}</span>
+      </div>
+      <div class="data-tile">
+        <span class="tile-label">SLA Contratado</span>
+        <span class="tile-value">{{ ticket.sla_horas ? (ticket.sla_horas + ' horas') : '-' }}</span>
+      </div>
+      <div class="data-tile">
+        <span class="tile-label">Vencimiento SLA</span>
+        <span class="tile-value deadline">{{ ticket.fecha_limite_sla | date:'short' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="notFound">
+    <div class="icon">!</div>
+    <h2>No encontramos tu ticket</h2>
+    <p>Verifica que el código y el correo sean los mismos que recibiste por notificación.</p>
+  </div>
+</div>

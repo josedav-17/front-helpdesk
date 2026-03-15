@@ -1,4 +1,4 @@
-export type UserRole = 'ADMIN' | 'MESA' | 'AREA';
+export type UserRole = 'ADMIN' | 'MESA' | 'AREA' | 'USUARIO';
 
 export interface AuthUser {
   id: string;
@@ -15,6 +15,6 @@ export interface LoginPayload {
 
 export interface LoginResponse {
   access_token: string;
-  token_type: 'bearer';
+  token_type: string;   // ✅ antes estaba 'bearer'
   user: AuthUser;
 }

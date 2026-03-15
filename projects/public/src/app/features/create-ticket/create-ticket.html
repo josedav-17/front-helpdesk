@@ -1,68 +1,76 @@
-<mat-card class="card">
-  <mat-card-title>Registrar solicitud</mat-card-title>
-  <mat-card-subtitle>
-    Completa el formulario y se generará un Ticket ID para seguimiento.
-  </mat-card-subtitle>
-
-  <form [formGroup]="form" (ngSubmit)="submit()" class="grid">
-    <mat-form-field appearance="outline">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="nombre" />
-      <mat-error *ngIf="form.controls.nombre.invalid">Requerido</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>ID / Documento</mat-label>
-      <input matInput formControlName="documento" />
-      <mat-error *ngIf="form.controls.documento.invalid">Requerido</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Correo</mat-label>
-      <input matInput formControlName="correo" />
-      <mat-error *ngIf="form.controls.correo.invalid">Correo inválido</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Categoría</mat-label>
-      <mat-select formControlName="categoria">
-        <mat-option value="Plataforma">Plataforma</mat-option>
-        <mat-option value="Pagos">Pagos</mat-option>
-        <mat-option value="Acceso">Acceso</mat-option>
-        <mat-option value="Soporte académico">Soporte académico</mat-option>
-        <mat-option value="Otro">Otro</mat-option>
-      </mat-select>
-      <mat-error *ngIf="form.controls.categoria.invalid">Requerido</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Descripción</mat-label>
-      <textarea matInput rows="5" formControlName="descripcion"></textarea>
-      <mat-error *ngIf="form.controls.descripcion.invalid">
-        Mínimo 10 caracteres
-      </mat-error>
-    </mat-form-field>
-
-    <div class="actions full">
-      <button mat-raised-button color="primary" [disabled]="form.invalid || loading">
-        {{ loading ? 'Enviando...' : 'Enviar solicitud' }}
-      </button>
+<div class="iud-portal-container">
+  
+  <section class="hero-form-section">
+    <div class="hero-text">
+      <h1>¿En qué podemos ayudarte hoy?</h1>
+      <p>Completa los detalles para generar tu radicado oficial.</p>
     </div>
-  </form>
-</mat-card>
 
-<mat-card *ngIf="ticketId" class="card success">
-  <mat-card-title>¡Solicitud registrada!</mat-card-title>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="portal-form">
+      
+      <div class="form-group-row">
+        <div class="input-field grow-2">
+          <label>Nombre Completo *</label>
+          <input type="text" formControlName="nombre" placeholder="Nombre y apellidos">
+        </div>
+        <div class="input-field grow-1">
+          <label>Documento *</label>
+          <input type="text" formControlName="documento">
+        </div>
+      </div>
 
-  <mat-card-content>
-    <p>Tu Ticket ID es:</p>
-    <h2 class="ticket">{{ ticketId }}</h2>
-    <p>Guárdalo para consultar el estado.</p>
-  </mat-card-content>
+      <div class="form-group-row">
+        <div class="input-field grow-2">
+          <label>Correo Institucional *</label>
+          <input type="email" formControlName="email">
+        </div>
+        <div class="input-field grow-1">
+          <label>Teléfono</label>
+          <input type="text" formControlName="telefono">
+        </div>
+        <div class="checkbox-field">
+          <mat-checkbox formControlName="tieneWhatsapp">Usa WhatsApp</mat-checkbox>
+        </div>
+      </div>
 
-  <mat-card-actions>
-    <button mat-stroked-button color="primary" (click)="goTrack()">
-      Consultar ahora
-    </button>
-  </mat-card-actions>
-</mat-card>
+      <div class="input-field full-width">
+        <label>Facultad, Dependencia o Empresa *</label>
+        <input type="text" formControlName="empresaDepartamento">
+      </div>
+
+      <div class="spacer-line"></div>
+
+      <div class="form-group-row">
+        <div class="input-field grow-1">
+          <label>Tipo de Solicitud *</label>
+          <select formControlName="tipo">
+            <option value="SOLICITUD">Solicitud</option>
+            <option value="INCIDENTE">Incidente</option>
+            <option value="QUEJA">Queja / Reclamo</option>
+          </select>
+        </div>
+        <div class="input-field grow-1">
+          <label>Categoría *</label>
+          <input type="text" formControlName="categoria" placeholder="Ej: Plataforma Académica">
+        </div>
+      </div>
+
+      <div class="input-field full-width">
+        <label>Asunto del caso *</label>
+        <input type="text" formControlName="asunto" class="asunto-bold">
+      </div>
+
+      <div class="input-field full-width">
+        <label>Descripción detallada *</label>
+        <textarea formControlName="descripcion" rows="5"></textarea>
+      </div>
+
+      <div class="form-footer">
+        <button type="button" class="btn-ghost" (click)="form.reset()">BORRAR TODO</button>
+        <button type="submit" class="btn-iud-red" [disabled]="loading || form.invalid">
+          {{ loading ? 'GENERANDO...' : 'ENVIAR SOLICITUD' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
