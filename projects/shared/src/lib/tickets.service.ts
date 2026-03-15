@@ -16,7 +16,7 @@ import {
 })
 export class TicketsService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://127.0.0.1:8000/api/tickets';
+  private readonly baseUrl = 'https://back-helpdesk-dmep.onrender.com';
 
   create(payload: TicketCreatePayload): Observable<TicketCreateResponse> {
     return this.http.post<TicketCreateResponse>(`${this.baseUrl}/crear`, payload);
