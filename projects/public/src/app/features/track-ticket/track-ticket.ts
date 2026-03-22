@@ -1,83 +1,49 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule, DatePipe } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-
 import { TicketsService } from '../../../../../shared/src/lib/tickets.service';
-
-interface TicketPublicView {
-  uuid: string;
-  ticket_label: string;
-  tipo_solicitud?: string;
-  categoria?: string;
-  subcategoria?: string;
-  asunto?: string;
-  descripcion_problema?: string;
-  area_asignada?: string;
-  estado?: string;
-  prioridad?: string;
-  sla_horas?: number;
-  creado_en?: string;
-  fecha_limite_sla?: string;
-}
-
-interface TicketConsultaResponse {
-  ticket: TicketPublicView | null;
-  historial?: any[];
-}
 
 @Component({
   selector: 'app-track-ticket',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatChipsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule, MatButtonModule, DatePipe],
   templateUrl: './track-ticket.html',
   styleUrls: ['./track-ticket.scss'],
 })
 export class TrackTicketComponent implements OnInit {
-  private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private api = inject(TicketsService);
+  private cdr = inject(ChangeDetectorRef);
 
-  ticket: TicketPublicView | null = null;
+  ticket: any = null;
   notFound = false;
   loading = false;
 
-  form = this.fb.group({
-    label: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
+  form = new FormGroup({
+    label: new FormControl('', {
+      validators: [Validators.required],
+      nonNullable: true
+    }),
+    email: new FormControl('', {
+      validators: [Validators.required, Validators.email],
+      nonNullable: true
+    })
   });
 
   ngOnInit(): void {
-    const prefillLabel = this.route.snapshot.queryParamMap.get('id');
-    const prefillEmail = this.route.snapshot.queryParamMap.get('email');
+    const id = this.route.snapshot.queryParamMap.get('id');
+    const email = this.route.snapshot.queryParamMap.get('email');
 
-    if (prefillLabel) {
-      this.form.patchValue({
-        label: prefillLabel,
-        email: prefillEmail || '',
-      });
-
-      if (prefillEmail) {
-        this.search();
-      }
+    if (id && email) {
+      this.form.patchValue({ label: id, email });
+      this.ejecutarBusqueda();
     }
   }
 
-  search(): void {
+  ejecutarBusqueda(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -86,42 +52,29 @@ export class TrackTicketComponent implements OnInit {
     this.loading = true;
     this.ticket = null;
     this.notFound = false;
+    this.cdr.detectChanges();
 
-    const payload = {
-      label: (this.form.value.label || '').trim(),
-      email: (this.form.value.email || '').trim(),
-    };
+    this.api.consultar(this.form.getRawValue()).subscribe({
+      next: (res: any) => {
+        const data = res?.data || res?.ticket || res;
 
-    this.api.consultar(payload).subscribe({
-      next: (res: TicketConsultaResponse) => {
-        this.ticket = res?.ticket ?? null;
-        this.notFound = !this.ticket;
+        if (data && (data.ticketLabel || data.ticketUuid)) {
+          this.ticket = data;
+          this.notFound = false;
+        } else {
+          this.ticket = null;
+          this.notFound = true;
+        }
+
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.ticket = null;
         this.notFound = true;
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
-  }
-
-  statusLabel(status?: string): string {
-    switch ((status || '').toUpperCase()) {
-      case 'ABIERTO':
-        return 'Abierto';
-      case 'EN_PROCESO':
-        return 'En proceso';
-      case 'PAUSADO':
-        return 'Pausado';
-      case 'RESUELTO':
-        return 'Resuelto';
-      case 'CANCELADO':
-        return 'Cancelado';
-      case 'CERRADO':
-        return 'Cerrado';
-      default:
-        return status || '';
-    }
   }
 }

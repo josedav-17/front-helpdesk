@@ -16,35 +16,47 @@
     <nav class="nav-section">
       <div class="group-label" *ngIf="!isCollapsed">SISTEMA</div>
 
-      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active"
-         [matTooltip]="isCollapsed ? 'Dashboard' : ''" matTooltipPosition="right">
+      <a
+        class="nav-item"
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [matTooltip]="isCollapsed ? 'Dashboard' : ''"
+        matTooltipPosition="right">
         <div class="icon-wrapper"><mat-icon>grid_view</mat-icon></div>
         <span class="nav-label">Dashboard</span>
       </a>
 
-      <a class="nav-item" routerLink="/tickets" routerLinkActive="active"
-         [matTooltip]="isCollapsed ? 'Gestión de Tickets' : ''" matTooltipPosition="right">
+      <a
+        class="nav-item"
+        routerLink="/tickets"
+        routerLinkActive="active"
+        [matTooltip]="isCollapsed ? 'Gestión de Tickets' : ''"
+        matTooltipPosition="right">
         <div class="icon-wrapper"><mat-icon>confirmation_number</mat-icon></div>
         <span class="nav-label">Gestión de Tickets</span>
-        <span class="nav-count" *ngIf="!isCollapsed">6</span>
       </a>
 
-      <a class="nav-item" routerLink="/users" routerLinkActive="active"
-         [matTooltip]="isCollapsed ? 'Gestión de Usuarios' : ''" matTooltipPosition="right">
-        <div class="icon-wrapper"><mat-icon>confirmation_number</mat-icon></div>
+      <a
+        *ngIf="isAdmin"
+        class="nav-item"
+        routerLink="/users"
+        routerLinkActive="active"
+        [matTooltip]="isCollapsed ? 'Gestión de Usuarios' : ''"
+        matTooltipPosition="right">
+        <div class="icon-wrapper"><mat-icon>group</mat-icon></div>
         <span class="nav-label">Gestión de usuarios</span>
       </a>
-
     </nav>
 
     <div class="sidebar-footer">
       <div class="user-pill" *ngIf="!isCollapsed">
-        <div class="avatar">AD</div>
+        <div class="avatar">{{ getInitials(displayName) }}</div>
         <div class="u-meta">
-          <span class="u-name">Admin User</span>
-          <span class="u-role">Administrador</span>
+          <span class="u-name">{{ displayName }}</span>
+          <span class="u-role">{{ displayRole }}</span>
         </div>
       </div>
+
       <button class="btn-logout" (click)="logout()">
         <mat-icon>logout</mat-icon>
         <span *ngIf="!isCollapsed">Cerrar Sesión</span>
@@ -60,6 +72,7 @@
         <span class="current">Tickets</span>
       </div>
     </header>
+
     <div class="viewport">
       <router-outlet></router-outlet>
     </div>

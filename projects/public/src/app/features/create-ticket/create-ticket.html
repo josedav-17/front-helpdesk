@@ -1,76 +1,124 @@
 <div class="iud-portal-container">
-  
   <section class="hero-form-section">
-    <div class="hero-text">
-      <h1>¿En qué podemos ayudarte hoy?</h1>
-      <p>Completa los detalles para generar tu radicado oficial.</p>
-    </div>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="portal-form">
-      
-      <div class="form-group-row">
-        <div class="input-field grow-2">
-          <label>Nombre Completo *</label>
-          <input type="text" formControlName="nombre" placeholder="Nombre y apellidos">
+    @if (result) {
+      <div class="ticket-result-view fade-in">
+        <div class="success-icon">✓</div>
+        
+        <div class="result-header">
+          <h2>Solicitud Radicada</h2>
+          <p>Tu caso ha sido procesado correctamente con los siguientes datos:</p>
         </div>
-        <div class="input-field grow-1">
-          <label>Documento *</label>
-          <input type="text" formControlName="documento">
-        </div>
-      </div>
 
-      <div class="form-group-row">
-        <div class="input-field grow-2">
-          <label>Correo Institucional *</label>
-          <input type="email" formControlName="email">
-        </div>
-        <div class="input-field grow-1">
-          <label>Teléfono</label>
-          <input type="text" formControlName="telefono">
-        </div>
-        <div class="checkbox-field">
-          <mat-checkbox formControlName="tieneWhatsapp">Usa WhatsApp</mat-checkbox>
-        </div>
-      </div>
+        <div class="ticket-details-card">
+          <div class="main-id">
+            <span class="label">RADICADO NO.</span>
+            <span class="value">{{ result.ticketLabel }}</span>
+          </div>
 
-      <div class="input-field full-width">
-        <label>Facultad, Dependencia o Empresa *</label>
-        <input type="text" formControlName="empresaDepartamento">
-      </div>
-
-      <div class="spacer-line"></div>
-
-      <div class="form-group-row">
-        <div class="input-field grow-1">
-          <label>Tipo de Solicitud *</label>
-          <select formControlName="tipo">
-            <option value="SOLICITUD">Solicitud</option>
-            <option value="INCIDENTE">Incidente</option>
-            <option value="QUEJA">Queja / Reclamo</option>
-          </select>
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="label">Estado Actual</span>
+              <span class="value status-badge">{{ result.estado }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Tipo</span>
+              <span class="value">{{ result.tipo }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Prioridad</span>
+              <span class="value">{{ result.prioridad }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">SLA (Horas)</span>
+              <span class="value">{{ result.slaHoras }}h</span>
+            </div>
+            <div class="detail-item full">
+              <span class="label">Fecha Límite de Respuesta</span>
+              <span class="value">{{ result.fechaLimiteSla | date:'long' }}</span>
+            </div>
+          </div>
         </div>
-        <div class="input-field grow-1">
-          <label>Categoría *</label>
-          <input type="text" formControlName="categoria" placeholder="Ej: Plataforma Académica">
+
+        <div class="result-actions">
+          <button class="btn-primary" (click)="goTrack()">CONSULTAR ESTADO</button>
+          <button class="btn-secondary" (click)="result = null">NUEVA SOLICITUD</button>
         </div>
       </div>
+    } @else {
+      <div class="fade-in">
+        <div class="hero-text">
+          <h1>¿En qué podemos ayudarte?</h1>
+          <p>Completa el formulario para generar tu radicado oficial.</p>
+        </div>
 
-      <div class="input-field full-width">
-        <label>Asunto del caso *</label>
-        <input type="text" formControlName="asunto" class="asunto-bold">
-      </div>
+        <form [formGroup]="form" (ngSubmit)="submit()" class="portal-form">
+          <div class="form-group-row">
+            <div class="input-field grow-2">
+              <label>Nombre Completo *</label>
+              <input type="text" formControlName="nombre" placeholder="Nombre y apellidos">
+            </div>
+            <div class="input-field grow-1">
+              <label>Documento *</label>
+              <input type="text" formControlName="documento">
+            </div>
+          </div>
 
-      <div class="input-field full-width">
-        <label>Descripción detallada *</label>
-        <textarea formControlName="descripcion" rows="5"></textarea>
-      </div>
+          <div class="form-group-row">
+            <div class="input-field grow-2">
+              <label>Correo Electronico *</label>
+              <input type="email" formControlName="email">
+            </div>
+            <div class="input-field grow-1">
+              <label>Teléfono</label>
+              <input type="text" formControlName="telefono">
+            </div>
+            <div class="checkbox-field">
+              <mat-checkbox formControlName="tieneWhatsapp">Usa WhatsApp</mat-checkbox>
+            </div>
+          </div>
 
-      <div class="form-footer">
-        <button type="button" class="btn-ghost" (click)="form.reset()">BORRAR TODO</button>
-        <button type="submit" class="btn-iud-red" [disabled]="loading || form.invalid">
-          {{ loading ? 'GENERANDO...' : 'ENVIAR SOLICITUD' }}
-        </button>
+          <div class="input-field full-width">
+            <label>Facultad, Dependencia o Empresa *</label>
+            <input type="text" formControlName="empresaDepartamento">
+          </div>
+
+          <div class="spacer-line"></div>
+
+          <div class="form-group-row">
+            <div class="input-field grow-1">
+              <label>Tipo de Solicitud *</label>
+              <select formControlName="tipo">
+                <option value="SOLICITUD">Solicitud</option>
+                <option value="INCIDENTE">Incidente</option>
+                <option value="QUEJA">Queja / Reclamo</option>
+              </select>
+            </div>
+            <div class="input-field grow-1">
+              <label>Categoría *</label>
+              <input type="text" formControlName="categoria" placeholder="Ej: Plataforma Académica">
+            </div>
+          </div>
+
+          <div class="input-field full-width">
+            <label>Asunto del caso *</label>
+            <input type="text" formControlName="asunto" class="asunto-bold">
+          </div>
+
+          <div class="input-field full-width">
+            <label>Descripción detallada *</label>
+            <textarea formControlName="descripcion" rows="5"></textarea>
+          </div>
+
+          <div class="form-footer">
+            <button type="button" class="btn-ghost" (click)="form.reset()">LIMPIAR</button>
+            <button type="submit" class="btn-iud-red" [disabled]="loading || form.invalid">
+              @if (loading) { PROCESANDO... } @else { ENVIAR SOLICITUD }
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    }
+
   </section>
 </div>

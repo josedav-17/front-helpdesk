@@ -1,174 +1,104 @@
-/* ==========================================================================
-   DASHBOARD MODULE - HELPDESK-IUD
-   ========================================================================== */
+/* DASHBOARD CLEAN - REPAINT FIX */
 
-// Variables de diseño
-$blue-iud: #2563eb;
-$red-iud: #dc2626;
-$orange-iud: #f97316;
-$green-iud: #10b981;
-$gray-bg: #ffffff;
-$gray-light: #f8fafc;
-$gray-border: #f1f5f9;
-$text-dark: #1e293b;
-$text-muted: #64748b;
-
-.dashboard-container {
+.dashboard-root {
+  padding: 20px;
+  background: #f1f5f9;
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  padding-bottom: 40px;
-  animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-  margin: 1.5rem;
+  gap: 20px;
+  min-height: 100vh;
 }
 
-/* --- SECCIÓN 1: KPI CARDS (Métricas rápidas) --- */
-.stats-grid {
+.kpi-header {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }
 
 .kpi-card {
   background: white;
-  padding: 24px;
-  border-radius: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  border-bottom: 3px solid #cbd5e1;
   display: flex;
   align-items: center;
-  gap: 16px;
-  border: 1px solid $gray-border;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px -8px rgba(37, 99, 235, 0.15);
-  }
-
-  .kpi-icon {
-    width: 52px; height: 52px;
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    
-    mat-icon { font-size: 26px; width: 26px; height: 26px; color: white; }
-
-    // Colores con sombras "Glow"
-    &.blue { background: $blue-iud; box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3); }
-    &.red { background: $red-iud; box-shadow: 0 8px 16px rgba(220, 38, 38, 0.3); }
-    &.orange { background: $orange-iud; box-shadow: 0 8px 16px rgba(249, 115, 22, 0.3); }
-    &.green { background: $green-iud; box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3); }
-  }
-
-  .kpi-data {
-    .label { display: block; color: $text-muted; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .value { display: block; color: $text-dark; font-size: 1.6rem; font-weight: 800; }
-  }
-}
-
-/* --- SECCIÓN 2: GRID DE GRÁFICAS --- */
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-
-  .large { grid-column: span 2; }
-
-  @media (max-width: 1100px) {
-    grid-template-columns: 1fr;
-    .large { grid-column: span 1; }
-  }
-}
-
-.chart-card {
-  background: white;
-  border-radius: 24px;
-  padding: 28px;
-  border: 1px solid $gray-border;
-  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.03);
-  display: flex;
-  flex-direction: column;
-  max-height: 80%;
-
-  .chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-
-    h3 { font-size: 1.1rem; font-weight: 700; color: $text-dark; margin: 0; }
-  }
-
-  .chart-content {
-    position: relative;
-    min-height: 280px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
-/* --- SECCIÓN 3: LISTA DE AGENTES (Estilo Cool) --- */
-.agent-list {
-  display: flex;
-  flex-direction: column;
   gap: 12px;
+  
+  .kpi-icon { color: #64748b; font-size: 24px; }
+  .label { font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; display: block; }
+  .value { font-size: 20px; font-weight: 800; color: #1e293b; }
 
-  .agent-item {
+  &.blue { border-bottom-color: #2563eb; .kpi-icon { color: #2563eb; } }
+  &.red { border-bottom-color: #ef4444; .kpi-icon { color: #ef4444; } }
+  &.orange { border-bottom-color: #f59e0b; .kpi-icon { color: #f59e0b; } }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  .chart-main { grid-column: span 2; }
+  .full-width { grid-column: span 3; }
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 16px;
+  }
+}
+
+/* FIX DE RENDERIZADO: Alturas obligatorias */
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-height: 250px; // Altura mínima para que Chart.js "vea" el espacio
+  
+  &.pie { height: 200px; }
+  &.mini { height: 160px; }
+  &.wide { height: 200px; }
+
+  canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  .user-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    background: $gray-light;
-    border-radius: 12px;
-    transition: background 0.2s;
-
-    &:hover { background: #f1f5f9; }
-  }
-
-  .agent-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    
-    .mini-avatar {
-      width: 34px; height: 34px;
-      background: $text-dark; color: white;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem; font-weight: 700;
-    }
-    span { font-size: 0.9rem; font-weight: 600; color: $text-dark; }
-  }
-
-  .agent-score {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: $blue-iud;
-    background: white;
-    padding: 4px 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    font-size: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f8fafc;
+    .avatar { font-weight: 700; color: #2563eb; margin-right: 8px; }
+    .name { flex: 1; color: #1e293b; }
+    .count { font-weight: 700; }
   }
 }
 
-/* --- ELEMENTOS EXTRAS --- */
-.badge-trend {
-  background: #dcfce7;
-  color: #15803d;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
+.loader-overlay {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  .spin { animation: rotate 2s linear infinite; }
 }
 
-/* Animaciones */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Tooltip de Chart.js personalizado (vía CSS si fuera necesario) */
-canvas {
-  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.02));
-}
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

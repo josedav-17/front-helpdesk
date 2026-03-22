@@ -4,13 +4,18 @@ import { AdminLayoutComponent } from './layout/admin-layout';
 import { LoginComponent } from './features/login/login';
 import { TicketsListComponent } from './features/tickets-list/tickets-list';
 import { TicketDetailComponent } from './features/ticket-detail/ticket-detail';
-import { DashboardComponent } from './features/dashboard/dashboard'; 
+import { DashboardComponent } from './features/dashboard/dashboard';
 import { UsersManagementComponent } from './features/users-management/users-management';
 
 import { authGuard } from './core/auth/auth-guard';
+import { loginGuard } from './core/auth/login-guard';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [loginGuard]
+  },
   {
     path: '',
     component: AdminLayoutComponent,
@@ -23,6 +28,5 @@ export const routes: Routes = [
       { path: 'tickets/:id', component: TicketDetailComponent },
     ],
   },
-
   { path: '**', redirectTo: 'login' },
 ];

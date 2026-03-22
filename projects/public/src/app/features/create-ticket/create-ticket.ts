@@ -1,15 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { TicketsService } from '../../../../../shared/src/lib/tickets.service';
@@ -24,12 +20,8 @@ import {
   selector: 'app-create-ticket',
   standalone: true,
   imports: [
-    CommonModule,
+    DatePipe,
     ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
     MatButtonModule,
     MatSnackBarModule,
     MatCheckboxModule,
@@ -46,7 +38,6 @@ export class CreateTicketComponent {
 
   loading = false;
   result: TicketCreateResponse | null = null;
-  lastEmail = '';
 
   form = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
@@ -54,11 +45,11 @@ export class CreateTicketComponent {
     email: ['', [Validators.required, Validators.email]],
     telefono: ['', [Validators.maxLength(30)]],
     tieneWhatsapp: [false],
-    empresaDepartamento: ['', [Validators.maxLength(150)]],
+    empresaDepartamento: ['', [Validators.required, Validators.maxLength(150)]],
     tipo: ['SOLICITUD' as TicketTipo, [Validators.required]],
     categoria: ['', [Validators.required]],
     subcategoria: ['', [Validators.maxLength(100)]],
-    asunto: ['', [Validators.maxLength(200)]],
+    asunto: ['', [Validators.required, Validators.maxLength(200)]],
     descripcion: ['', [Validators.required, Validators.minLength(10)]],
     areaAsignada: ['MESA'],
   });
@@ -71,11 +62,7 @@ export class CreateTicketComponent {
 
     this.loading = true;
     this.result = null;
-    this.lastEmail = (this.form.getRawValue().email ?? '').trim();
-    this.cdr.detectChanges();
-
     const raw = this.form.getRawValue();
-    const prioridad = this.getPrioridadByTipo(raw.tipo as TicketTipo);
 
     const payload: TicketCreatePayload = {
       nombre: (raw.nombre ?? '').trim(),
@@ -89,7 +76,7 @@ export class CreateTicketComponent {
       subcategoria: this.normalizeOptional(raw.subcategoria),
       asunto: this.normalizeOptional(raw.asunto),
       descripcion: (raw.descripcion ?? '').trim(),
-      prioridad,
+      prioridad: this.getPrioridadByTipo(raw.tipo as TicketTipo),
       areaAsignada: raw.areaAsignada ?? 'MESA',
     };
 
@@ -97,45 +84,18 @@ export class CreateTicketComponent {
       .create(payload)
       .pipe(
         finalize(() => {
-          queueMicrotask(() => {
-            this.loading = false;
-            this.cdr.detectChanges();
-          });
+          this.loading = false;
+          this.cdr.detectChanges();
         })
       )
       .subscribe({
         next: (res) => {
           this.result = res;
-
-          this.snack.open(
-            res.mensaje || 'Solicitud creada',
-            'OK',
-            { duration: 2500 }
-          );
-
-          this.form.reset({
-            nombre: '',
-            documento: '',
-            email: '',
-            telefono: '',
-            tieneWhatsapp: false,
-            empresaDepartamento: '',
-            tipo: 'SOLICITUD',
-            categoria: '',
-            subcategoria: '',
-            asunto: '',
-            descripcion: '',
-            areaAsignada: 'MESA',
-          });
+          this.snack.open(res.mensaje || 'Ticket creado', 'OK', { duration: 2500 });
+          this.form.reset({ tipo: 'SOLICITUD', tieneWhatsapp: false, areaAsignada: 'MESA' });
         },
         error: (err) => {
-          console.error('Error creando ticket:', err);
-
-          const msg =
-            err?.error?.detail ||
-            err?.error?.message ||
-            'Error creando solicitud';
-
+          const msg = err?.error?.detail || 'Error creando solicitud';
           this.snack.open(msg, 'OK', { duration: 3000 });
         },
       });
@@ -143,31 +103,16 @@ export class CreateTicketComponent {
 
   goTrack(): void {
     if (!this.result?.ticketLabel) return;
-
     this.router.navigate(['/consulta'], {
-      queryParams: {
-        id: this.result.ticketLabel,
-        email: this.lastEmail,
-      },
+      queryParams: { id: this.result.ticketLabel },
     });
-  }
-
-  get prioridadSugerida(): TicketPrioridad {
-    const tipo = this.form.controls.tipo.value as TicketTipo;
-    return this.getPrioridadByTipo(tipo);
   }
 
   private getPrioridadByTipo(tipo: TicketTipo): TicketPrioridad {
     const mapa: Record<TicketTipo, TicketPrioridad> = {
-      PETICION: 'BAJA',
-      QUEJA: 'MEDIA',
-      RECLAMO: 'ALTA',
-      SUGERENCIA: 'BAJA',
-      INCIDENTE: 'URGENTE',
-      SOLICITUD: 'MEDIA',
-      CONSULTA: 'BAJA',
+      PETICION: 'BAJA', QUEJA: 'MEDIA', RECLAMO: 'ALTA',
+      SUGERENCIA: 'BAJA', INCIDENTE: 'URGENTE', SOLICITUD: 'MEDIA', CONSULTA: 'BAJA',
     };
-
     return mapa[tipo] ?? 'MEDIA';
   }
 
@@ -175,4 +120,4 @@ export class CreateTicketComponent {
     const cleaned = (value ?? '').trim();
     return cleaned.length ? cleaned : null;
   }
-}
+} 

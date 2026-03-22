@@ -6,14 +6,16 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const token = auth.getToken();
 
-  // No adjuntar token en login
+  // No enviar token al login
   if (!token || req.url.includes('/api/auth/login')) {
     return next(req);
   }
 
-  return next(
-    req.clone({
-      setHeaders: { Authorization: `Bearer ${token}` }
-    })
-  );
+  const authReq = req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return next(authReq);
 };

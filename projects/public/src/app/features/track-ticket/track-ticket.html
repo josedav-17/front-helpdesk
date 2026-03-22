@@ -1,82 +1,150 @@
-<div class="track-container">
-  <div class="search-hero">
-    <div class="search-content">
-      <h1>Consultar Ticket</h1>
-      <p>Sigue el progreso de tu requerimiento institucional</p>
-      
-      <form [formGroup]="form" (ngSubmit)="search()" class="compact-search-bar">
-        <input type="text" formControlName="label" placeholder="ID del Ticket">
-        <input type="email" formControlName="email" placeholder="Correo electrónico">
-        <button type="submit" [disabled]="form.invalid || loading">
-          {{ loading ? '...' : 'BUSCAR' }}
+<div class="track-page">
+  <div class="hero-search">
+    <div class="container">
+      <h1>Mesa de Ayuda</h1>
+      <p>Estado detallado de su requerimiento</p>
+
+      <div [formGroup]="form" class="search-card">
+        <div class="input-group">
+          <label>N° Radicado</label>
+          <input
+            type="text"
+            formControlName="label"
+            placeholder="TK-0000"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Correo Electrónico</label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="usuario@correo.com"
+          />
+        </div>
+
+        <button
+          type="button"
+          (click)="ejecutarBusqueda()"
+          [disabled]="loading"
+        >
+          {{ loading ? 'Buscando...' : 'BUSCAR TICKET' }}
         </button>
-      </form>
-    </div>
-  </div>
-
-  <div class="ticket-dashboard" *ngIf="ticket">
-    <div class="dashboard-header">
-      <div class="id-group">
-        <span class="label">RADICADO</span>
-        <span class="value">#{{ ticket.ticket_label }}</span>
-      </div>
-      <div class="status-pill" [attr.data-status]="ticket.estado">
-        {{ statusLabel(ticket.estado) }}
-      </div>
-    </div>
-
-    <div class="data-grid">
-      <div class="data-tile">
-        <span class="tile-label">Asunto</span>
-        <span class="tile-value highlight">{{ ticket.asunto || '-' }}</span>
-      </div>
-
-      <div class="data-tile">
-        <span class="tile-label">Prioridad</span>
-        <span class="tile-value">{{ ticket.prioridad || '-' }}</span>
-      </div>
-
-      <div class="data-tile">
-        <span class="tile-label">Área Asignada</span>
-        <span class="tile-value">{{ ticket.area_asignada || '-' }}</span>
-      </div>
-
-      <div class="data-tile">
-        <span class="tile-label">Tipo</span>
-        <span class="tile-value">{{ ticket.tipo_solicitud || '-' }}</span>
-      </div>
-      <div class="data-tile">
-        <span class="tile-label">Categoría</span>
-        <span class="tile-value">{{ ticket.categoria || '-' }}</span>
-      </div>
-      <div class="data-tile">
-        <span class="tile-label">Subcategoría</span>
-        <span class="tile-value">{{ ticket.subcategoria || '-' }}</span>
-      </div>
-
-      <div class="data-tile col-span-3 desc-box">
-        <span class="tile-label">Descripción detallada</span>
-        <p class="tile-text">{{ ticket.descripcion_problema || '-' }}</p>
-      </div>
-
-      <div class="data-tile">
-        <span class="tile-label">Fecha Creación</span>
-        <span class="tile-value">{{ ticket.creado_en | date:'mediumDate' }}</span>
-      </div>
-      <div class="data-tile">
-        <span class="tile-label">SLA Contratado</span>
-        <span class="tile-value">{{ ticket.sla_horas ? (ticket.sla_horas + ' horas') : '-' }}</span>
-      </div>
-      <div class="data-tile">
-        <span class="tile-label">Vencimiento SLA</span>
-        <span class="tile-value deadline">{{ ticket.fecha_limite_sla | date:'short' }}</span>
       </div>
     </div>
   </div>
 
-  <div class="empty-state" *ngIf="notFound">
-    <div class="icon">!</div>
-    <h2>No encontramos tu ticket</h2>
-    <p>Verifica que el código y el correo sean los mismos que recibiste por notificación.</p>
+  <div class="container main-content">
+    @if (ticket) {
+      <div class="ticket-view fade-in">
+        <div class="view-header">
+          <div class="ticket-id">
+            <span class="badge">CONSULTA EXITOSA</span>
+            <h2>Ticket #{{ ticket.ticketLabel }}</h2>
+            <p class="ticket-subtitle">
+              {{ ticket.asunto || 'Detalle del requerimiento registrado' }}
+            </p>
+          </div>
+
+          <div class="status-box">
+            <span class="status-pill" [attr.data-status]="ticket.estadoNombre">
+              {{ ticket.estadoNombre || 'SIN ESTADO' }}
+            </span>
+            <small>Actualizado: {{ ticket.actualizadoEn | date:'short' }}</small>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="section-title">Datos del solicitante</div>
+          <div class="data-row">
+            <div class="col">
+              <label>Nombre</label>
+              <span>{{ ticket.solicitanteNombre || 'No registrado' }}</span>
+            </div>
+
+            <div class="col">
+              <label>Correo</label>
+              <span>{{ ticket.solicitanteEmail || 'No registrado' }}</span>
+            </div>
+
+            <div class="col">
+              <label>Documento</label>
+              <span>{{ ticket.documento || 'No registrado' }}</span>
+            </div>
+          </div>
+
+          <div class="section-title">Clasificación</div>
+          <div class="data-row">
+            <div class="col">
+              <label>Tipo de solicitud</label>
+              <span>{{ ticket.tipoSolicitud || 'N/A' }}</span>
+            </div>
+
+            <div class="col">
+              <label>Categoría</label>
+              <span>{{ ticket.categoria || 'N/A' }}</span>
+            </div>
+
+            <div class="col">
+              <label>Subcategoría</label>
+              <span>{{ ticket.subcategoria || 'N/A' }}</span>
+            </div>
+
+            <div class="col">
+              <label>Prioridad</label>
+              <span class="prio">{{ ticket.prioridadNombre || 'N/A' }}</span>
+            </div>
+          </div>
+
+          <div class="section-title">Contenido del ticket</div>
+
+          <div class="full-col asunto-box">
+            <label>Asunto</label>
+            <strong>{{ ticket.asunto || 'Sin asunto registrado' }}</strong>
+          </div>
+
+          <div class="full-col desc-box">
+            <label>Descripción</label>
+            <p>{{ ticket.descripcionProblema || 'Sin descripción registrada.' }}</p>
+          </div>
+
+          <div class="section-title">Seguimiento</div>
+          <div class="data-row">
+            <div class="col">
+              <label>Área encargada</label>
+              <span>{{ ticket.areaAsignada || 'Sin asignar' }}</span>
+            </div>
+
+            <div class="col">
+              <label>Fecha de creación</label>
+              <span>{{ ticket.creadoEn | date:'medium' }}</span>
+            </div>
+
+            <div class="col">
+              <label>Última acción</label>
+              <span>{{ ticket.ultimaAccion || 'Sin movimientos' }}</span>
+            </div>
+          </div>
+
+          <div class="full-col response-box">
+            <label>
+              Observación registrada
+              @if (ticket.ultimoActorNombre) {
+                <span class="actor-inline">({{ ticket.ultimoActorNombre }})</span>
+              }
+            </label>
+
+            <p>{{ ticket.ultimoMotivo || 'Ticket creado desde portal.' }}</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (notFound && !loading) {
+      <div class="error-view fade-in">
+        <h3>Ticket no encontrado</h3>
+        <p>Por favor revise los datos e intente de nuevo.</p>
+      </div>
+    }
   </div>
 </div>

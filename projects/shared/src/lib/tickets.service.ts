@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-
 import {
   TicketCreatePayload,
   TicketCreateResponse,
@@ -16,7 +15,8 @@ import {
 })
 export class TicketsService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://back-helpdesk-dmep.onrender.com';
+  // private readonly baseUrl = 'https://back-helpdesk-dmep.onrender.com';
+  private readonly baseUrl = 'http://127.0.0.1:8000/api/tickets';
 
   create(payload: TicketCreatePayload): Observable<TicketCreateResponse> {
     return this.http.post<TicketCreateResponse>(`${this.baseUrl}/crear`, payload);
@@ -32,6 +32,25 @@ export class TicketsService {
 
   getById(ticketId: string): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/${ticketId}`);
+  }
+
+  dashboardMetricas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/dashboard-metricas`);
+  }
+
+  actualizar(
+    ticketId: string,
+    payload: {
+      estado: string;
+      prioridad: string;
+      area: string;
+      respuesta: string;
+    }
+  ): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.baseUrl}/${ticketId}/actualizar`,
+      payload
+    );
   }
 
   asignar(ticketId: string, agenteId: string, motivo: string): Observable<{ message: string }> {
@@ -84,5 +103,12 @@ export class TicketsService {
       motivo,
       rol,
     });
+  }
+
+  archivar(ticketId: string, motivo: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.baseUrl}/${ticketId}/archivar`,
+      { motivo }
+    );
   }
 }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -33,12 +33,13 @@ import { AuthService } from '../../core/auth/auth.service';
 export class LoginComponent {
   form: FormGroup;
   loading = false;
-  hide = true; // Controla la visibilidad de la contraseña en el HTML
+  hide = true;
 
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private snack: MatSnackBar
   ) {
     this.form = this.fb.group({
@@ -51,20 +52,28 @@ export class LoginComponent {
     if (this.form.invalid || this.loading) return;
 
     this.loading = true;
-    const { user, pass } = this.form.value;
 
-    this.auth.login(user.trim(), pass.trim()).subscribe({
+    const user = (this.form.get('user')?.value ?? '').trim();
+    const pass = (this.form.get('pass')?.value ?? '').trim();
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
+
+    this.auth.login(user, pass).subscribe({
       next: (ok) => {
         this.loading = false;
+
         if (ok) {
-          this.router.navigate(['/tickets']);
+          this.router.navigateByUrl(returnUrl);
         } else {
-          this.snack.open('Credenciales administrativas incorrectas', 'Cerrar', { duration: 3000 });
+          this.snack.open('Credenciales administrativas incorrectas', 'Cerrar', {
+            duration: 3000
+          });
         }
       },
       error: () => {
         this.loading = false;
-        this.snack.open('Error de conexión con el servidor', 'Cerrar', { duration: 3000 });
+        this.snack.open('Error de conexión con el servidor', 'Cerrar', {
+          duration: 3000
+        });
       }
     });
   }

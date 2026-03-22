@@ -1,113 +1,120 @@
-$iud-dark: #051c2c; // Azul ultra oscuro del portal
+$iud-dark: #051c2c;
 $iud-red: #d32f2f;
 $iud-cyan: #00bcd4;
 
 .iud-portal-container {
   width: 100%;
   min-height: 100vh;
-  background: $iud-dark; // Fondo oscuro para eliminar el "blanco de hospital"
+  background: $iud-dark;
   color: white;
   font-family: 'Montserrat', sans-serif;
 }
 
 .hero-form-section {
-  max-width: 1000px;
+  max-width: 850px;
   margin: 0 auto;
   padding: 60px 20px;
 }
 
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* FORM STYLES */
 .hero-text {
   margin-bottom: 40px;
-  .tag { color: $iud-cyan; font-weight: 700; letter-spacing: 2px; font-size: 12px; }
-  h1 { font-size: 2.5rem; font-weight: 800; margin: 10px 0; }
-  p { opacity: 0.7; font-size: 1.1rem; }
+  h1 { font-size: 2.2rem; font-weight: 800; margin: 0; }
+  p { opacity: 0.6; margin-top: 8px; }
 }
 
 .portal-form {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 20px;
 }
 
 .form-group-row {
   display: flex;
-  gap: 20px;
+  gap: 15px;
   flex-wrap: wrap;
 }
 
 .input-field {
   display: flex;
   flex-direction: column;
-  
-  label {
-    font-size: 11px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: rgba(255,255,255,0.6);
-    text-transform: uppercase;
-  }
-
+  label { font-size: 11px; font-weight: 700; margin-bottom: 6px; color: rgba(255,255,255,0.4); text-transform: uppercase; }
   input, select, textarea {
-    background: rgba(255,255,255,0.05); // Input semi-transparente
+    background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 4px;
-    padding: 14px;
+    padding: 12px;
     color: white;
     font-size: 15px;
-    transition: all 0.3s ease;
-
-    &:focus {
-      outline: none;
-      background: rgba(255,255,255,0.1);
-      border-color: $iud-cyan;
-      box-shadow: 0 0 15px rgba(0, 188, 212, 0.2);
-    }
+    &:focus { outline: none; border-color: $iud-cyan; }
   }
-
   &.full-width { width: 100%; }
-  &.grow-2 { flex: 2; min-width: 250px; }
+  &.grow-2 { flex: 2; min-width: 200px; }
   &.grow-1 { flex: 1; min-width: 150px; }
 }
 
-.checkbox-field {
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: 10px;
-  ::ng-deep .mdc-label { color: white !important; }
-}
-
-.spacer-line {
-  height: 1px;
-  background: linear-gradient(90deg, $iud-cyan, transparent);
-  margin: 20px 0;
-}
+.spacer-line { height: 1px; background: rgba(255,255,255,0.1); margin: 10px 0; }
 
 .form-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 20px;
-  margin-top: 30px;
+  gap: 15px;
+  .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 20px; cursor: pointer; }
+  .btn-iud-red { background: $iud-red; color: white; border: none; padding: 10px 30px; font-weight: 700; border-radius: 4px; cursor: pointer; }
+}
 
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.3);
-    color: white;
-    padding: 12px 25px;
-    cursor: pointer;
-    &:hover { background: rgba(255,255,255,0.05); }
+/* RESULT VIEW STYLES */
+.ticket-result-view {
+  text-align: center;
+  padding: 40px 0;
+
+  .success-icon {
+    width: 60px; height: 60px; background: $iud-cyan; color: $iud-dark;
+    font-size: 35px; line-height: 60px; border-radius: 50%; display: inline-block;
+    margin-bottom: 20px;
   }
 
-  .btn-iud-red {
-    background: $iud-red;
-    color: white;
-    border: none;
-    padding: 12px 40px;
-    font-weight: 800;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
-    &:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(211, 47, 47, 0.4); }
+  h2 { font-size: 2rem; margin-bottom: 10px; }
+}
+
+.ticket-details-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 30px;
+  margin: 30px auto;
+  max-width: 500px;
+
+  .main-id {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 20px; margin-bottom: 20px;
+    .label { font-size: 10px; opacity: 0.5; }
+    .value { display: block; font-size: 2.2rem; font-weight: 900; color: $iud-cyan; }
+  }
+
+  .details-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left;
+    .detail-item {
+      .label { font-size: 10px; opacity: 0.4; text-transform: uppercase; }
+      .value { display: block; font-size: 14px; font-weight: 600; margin-top: 4px; }
+      &.full { grid-column: span 2; }
+      .status-badge { color: $iud-cyan; }
+    }
   }
 }
 
-.asunto-bold { font-weight: 700; font-size: 1.2rem !important; }
+.result-actions {
+  display: flex; gap: 15px; justify-content: center;
+  button { padding: 14px 25px; border-radius: 6px; font-weight: 700; cursor: pointer; border: none; }
+  .btn-primary { background: $iud-cyan; color: $iud-dark; }
+  .btn-secondary { background: rgba(255,255,255,0.1); color: white; }
+}

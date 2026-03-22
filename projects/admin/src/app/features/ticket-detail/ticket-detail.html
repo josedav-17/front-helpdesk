@@ -1,93 +1,170 @@
-<div class="page-container" *ngIf="!loading && ticket">
-  <div class="main-grid">
+<div class="ticket-console" *ngIf="!loading && ticket">
+  
+  <header class="console-header">
+    <div class="header-main">
+      <button class="btn-back" (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+      <div class="ticket-identity">
+        <!-- <span class="id-tag">TICKET #{{ ticket.label }}</span> -->
+        <h1>{{ ticket.label }}</h1>
+      </div>
+    </div>
     
-    <aside class="left-col">
-      <div class="card profile-card">
-        <button type="button" class="btn-back-action" (click)="back()">
-          <mat-icon>arrow_back</mat-icon>
-          <span>Volver a la consola</span>
-        </button>
-
-        <div class="avatar">{{ ticket.nombre?.charAt(0) }}</div>
-        <h2 class="name">{{ ticket.nombre }}</h2>
-        <p class="email">{{ ticket.correo }}</p>
-        <div class="contacts">
-          <p><mat-icon>smartphone</mat-icon> {{ ticket.telefono }}</p>
-          <p class="wa"><mat-icon>verified</mat-icon> WhatsApp disponible</p>
-        </div>
+    <div class="header-actions">
+      <div class="indicator-group">
+        <div class="status-pill" [attr.data-status]="ticket.estado_db">{{ ticket.estado_db }}</div>
       </div>
+    </div>
+  </header>
 
-      <div class="card data-card">
-        <label class="section-label">DATOS DEL TICKET</label>
-        <div class="info-row"><span>ID Registro</span> <b>{{ ticket.label }}</b></div>
-        <div class="info-row"><span>Estado DB</span> <b>{{ ticket.estado_db }}</b></div>
-        <div class="info-row"><span>Prioridad</span> <b>{{ ticket.prioridad_nom }}</b></div>
-        <div class="info-row"><span>IP</span> <span>{{ ticket.ip_registro }}</span></div>
-      </div>
-    </aside>
-
-    <main class="center-col">
-      <div class="card info-card">
-        <div class="ticket-header-meta">
-          <span class="type-tag">{{ ticket.categoria }}</span>
-          <span class="date-tag">{{ ticket.creado_en | date:'dd/MM/yyyy, h:mm a' }}</span>
+  <div class="console-grid">
+    
+    <main class="main-column">
+      
+      <section class="card-section requirement">
+        <div class="card-header">
+          <mat-icon>chat_bubble_outline</mat-icon>
+          <span>Descripción del Caso</span>
         </div>
-        <!-- <h1 class="main-title">{{ ticket.asunto }}</h1> -->
-        <div class="user-desc">
-          <label>DESCRIPCIÓN DEL USUARIO</label>
+        <div class="card-body">
           <p>{{ ticket.descripcion }}</p>
+          <div class="body-footer">
+            Fecha creación: {{ ticket.creado_en | date:'dd MMM, HH:mm' }}
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="card form-card" [formGroup]="form">
-        <label class="section-label">GESTIÓN Y RESPUESTA</label>
-        <div class="form-grid">
-          <div class="f-group">
-            <label>Estado</label>
+      <section class="card-section action-panel" [formGroup]="form">
+        <div class="card-header">
+          <mat-icon>edit_note</mat-icon>
+          <span>Resolución y Respuesta Oficial</span>
+        </div>
+        
+        <div class="form-toolbar">
+          <div class="field">
+            <label>Cambiar Estado</label>
             <select formControlName="estado">
               <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
             </select>
           </div>
-          <div class="f-group">
+          <div class="field">
             <label>Prioridad</label>
             <select formControlName="prioridad">
-              <option value="BAJA">Baja</option>
-              <option value="MEDIA">Media</option>
-              <option value="ALTA">Alta</option>
+              <option *ngFor="let p of priorityOptions" [value]="p.value">{{ p.label }}</option>
             </select>
           </div>
-          <div class="f-group">
-            <label>Área</label>
+          <div class="field">
+            <label>Área Responsable</label>
             <select formControlName="area">
-              <option value="Soporte N1">Soporte N1</option>
-              <option value="Redes">Redes</option>
+              <option *ngFor="let a of areaOptions" [value]="a.value">{{ a.label }}</option>
             </select>
           </div>
-          <div class="f-group full">
-            <label>Respuesta al usuario</label>
-            <textarea formControlName="respuesta" placeholder="Escriba la solución aquí..."></textarea>
+        </div>
+
+        <div class="editor-wrap">
+          <textarea formControlName="respuesta" placeholder="Escriba la solución detallada..."></textarea>
+          <div class="editor-footer">
+            <div class="info">
+              <mat-icon>info_outline</mat-icon>
+              <span>Se enviará una notificación automática al correo del cliente (proximamente).</span>
+            </div>
+            <button class="btn-primary" (click)="save()" [disabled]="!canSave">
+              <mat-icon *ngIf="!saving">send</mat-icon>
+              <span>{{ saving ? 'PROCESANDO...' : 'ACTUALIZAR TICKET' }}</span>
+            </button>
           </div>
         </div>
-        <div class="footer">
-          <span><mat-icon>mail</mat-icon> Notificación automática</span>
-          <button class="btn-update" (click)="save()" [disabled]="form.invalid || saving">
-            <mat-icon *ngIf="!saving">send</mat-icon> ACTUALIZAR TICKET
-          </button>
-        </div>
-      </div>
+      </section>
     </main>
 
-    <aside class="right-col">
-      <div class="card history-card">
-        <label class="section-label">HISTORIAL</label>
-        <div class="timeline" *ngIf="historial.length > 0">
-          <div class="log" *ngFor="let h of historial">
-            <div class="log-h"><b>{{ h.actor }}</b> <span>{{ h.fecha | date:'shortTime' }}</span></div>
-            <p>{{ h.accion }}</p>
+    <aside class="side-column">
+      
+
+      <div class="side-block">
+  <label>INFORMACIÓN DEL SOLICITANTE</label>
+  <div class="user-info">
+    <div class="avatar">{{ ticket.nombre?.charAt(0) }}</div>
+    <div class="details">
+      <div class="u-row">
+        <span class="u-label">Nombre:</span>
+        <strong>{{ ticket.nombre }}</strong>
+      </div>
+      <div class="u-row">
+        <span class="u-label">Correo:</span>
+        <span class="u-value">{{ ticket.correo }}</span>
+      </div>
+      <div class="u-row">
+        <span class="u-label">Teléfono:</span>
+        <div class="u-value">
+          <span>{{ ticket.telefono }}</span>
+          <a *ngIf="ticket.tiene_whatsapp" 
+            [href]="'https://wa.me/' + ticket.telefono" 
+            target="_blank" 
+            class="ws-icon-link"
+            title="Contactar por WhatsApp">
+            <mat-icon>chat</mat-icon>
+          </a>
+        </div>
+      </div>    
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <label>DETALLES DE ASIGNACIÓN</label>
+  <div class="tech-list">
+    <div class="tech-item">
+      <span>IP Origen:</span>
+      <strong>{{ ticket.ip_registro }}</strong>
+    </div>
+    <div class="tech-item">
+      <span>Prioridad:</span>
+      <span class="prio-tag" [attr.data-prio]="ticket.prioridad_nom">{{ ticket.prioridad_nom }}</span>
+    </div>
+    <div class="tech-item">
+      <span>Área Asignada:</span>
+      <strong class="area-val">{{ ticket.area_asignada }}</strong>
+    </div>
+  </div>
+</div>
+
+
+      <div class="side-block">
+  <label>HISTORIAL DE ACTIVIDAD</label>
+  <div class="timeline">
+    <div class="t-item" *ngFor="let h of historial">
+      <div class="t-marker"></div>
+      <div class="t-content">
+        <div class="t-header">
+          <span class="t-actor">{{ h.actor_nombre }}</span>
+          <span class="t-date">{{ h.fecha | date:'dd MMM, HH:mm' }}</span>
+        </div>
+        
+        <div class="t-action-badge">{{ h.accion }}</div>
+
+        <div class="t-changes" *ngIf="h.estado_antes || h.prioridad_antes">
+          <div class="change-row" *ngIf="h.estado_antes">
+            <mat-icon>sync_alt</mat-icon>
+            <span>{{ h.estado_antes }}</span>
+            <mat-icon class="arrow">east</mat-icon>
+            <span class="new-val">{{ h.estado_despues }}</span>
+          </div>
+          <div class="change-row" *ngIf="h.area_antes">
+            <mat-icon>account_tree</mat-icon>
+            <span>{{ h.area_antes }}</span>
+            <mat-icon class="arrow">east</mat-icon>
+            <span class="new-val">{{ h.area_despues }}</span>
           </div>
         </div>
-        <div class="empty" *ngIf="historial.length === 0">Sin movimientos aún.</div>
+
+        <div class="t-note" *ngIf="h.comentario || h.respuesta">
+          <p>{{ h.comentario || h.respuesta }}</p>
+        </div>
       </div>
+    </div>
+  </div>
+</div>
+
+
     </aside>
 
   </div>

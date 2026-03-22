@@ -220,8 +220,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.renderCharts = false;
     this.cdr.markForCheck();
 
-    this.sub = this.ticketsService.dashboard().subscribe({
+    this.sub = this.ticketsService.dashboardMetricas().subscribe({   
       next: (resp: any[]) => {
+        console.log(resp)
+        
         this.tickets = (resp ?? []) as TicketApi[];
 
         this.buildDashboardData();

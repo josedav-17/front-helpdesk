@@ -7,36 +7,54 @@
   <nav class="tool-belt">
     <div class="input-flat id-size">
       <mat-icon>tag</mat-icon>
-      <input [(ngModel)]="filters.id" (keyup)="applyFilter()" placeholder="ID...">
+      <input
+        [(ngModel)]="filters.id"
+        (keyup)="applyFilter()"
+        placeholder="ID...">
     </div>
 
     <div class="input-flat grow">
       <mat-icon>search</mat-icon>
-      <input [(ngModel)]="filters.search" (keyup)="applyFilter()" placeholder="Buscar por Tipo de caso o Correo del Solicitante...">
+      <input
+        [(ngModel)]="filters.search"
+        (keyup)="applyFilter()"
+        placeholder="Buscar por tipo de caso o correo del solicitante...">
     </div>
 
     <div class="select-flat">
       <label>Estado</label>
       <select [(ngModel)]="filters.status" (change)="applyFilter()">
-        <option *ngFor="let s of statusOptions" [value]="s">{{s}}</option>
+        <option *ngFor="let s of statusOptions" [value]="s">
+          {{ s }}
+        </option>
       </select>
     </div>
 
     <div class="select-flat">
       <label>Prioridad</label>
       <select [(ngModel)]="filters.priority" (change)="applyFilter()">
-        <option *ngFor="let p of priorityOptions" [value]="p">{{p}}</option>
+        <option *ngFor="let p of priorityOptions" [value]="p">
+          {{ p }}
+        </option>
       </select>
     </div>
 
     <div class="select-flat">
       <label>Área</label>
-      <select [(ngModel)]="filters.area" (change)="applyFilter()">
-        <option *ngFor="let a of areaOptions" [value]="a">{{a}}</option>
+      <select
+        [(ngModel)]="filters.area"
+        (change)="applyFilter()"
+        [disabled]="isAreaUser()">
+        <option *ngFor="let a of areaOptions" [value]="a.value">
+          {{ a.label }}
+        </option>
       </select>
     </div>
 
-    <button class="btn-refresh" (click)="clearFilters()" matTooltip="Limpiar filtros">
+    <button
+      class="btn-refresh"
+      (click)="clearFilters()"
+      matTooltip="Limpiar filtros">
       <mat-icon>filter_alt_off</mat-icon>
     </button>
   </nav>
@@ -47,22 +65,23 @@
     </div>
 
     <table mat-table [dataSource]="view" class="table-saas">
-      
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> Referencia </th>
+        <th mat-header-cell *matHeaderCellDef>Referencia</th>
         <td mat-cell *matCellDef="let t">
           <div class="cell-ref">
-            <span class="dot" 
-                  [ngClass]="getSlaClass(t)" 
-                  [matTooltip]="t.vencido ? 'TICKET VENCIDO' : t.horasRestantes + 'h restantes'">
+            <span
+              class="dot"
+              [ngClass]="getSlaClass(t)"
+              [matTooltip]="t.vencido ? 'TICKET VENCIDO' : t.horasRestantes + 'h restantes'">
             </span>
+
             <span class="label-ref">{{ t.label }}</span>
           </div>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="info">
-        <th mat-header-cell *matHeaderCellDef> Tipo Caso / Solicitante </th>
+        <th mat-header-cell *matHeaderCellDef>Tipo Caso / Solicitante</th>
         <td mat-cell *matCellDef="let t">
           <div class="cell-info">
             <span class="main-txt">{{ t.categoria }}</span>
@@ -72,7 +91,7 @@
       </ng-container>
 
       <ng-container matColumnDef="prioridad">
-        <th mat-header-cell *matHeaderCellDef> Prioridad </th>
+        <th mat-header-cell *matHeaderCellDef>Prioridad</th>
         <td mat-cell *matCellDef="let t">
           <span class="prio-tag" [ngClass]="t.prioridad.toLowerCase()">
             {{ t.prioridad }}
@@ -81,36 +100,47 @@
       </ng-container>
 
       <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
         <td mat-cell *matCellDef="let t">
-          <span class="status-txt" [ngClass]="t.estado.toLowerCase()">{{ t.estado }}</span>
+          <span class="status-txt" [ngClass]="t.estado.toLowerCase()">
+            {{ t.estado }}
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="area">
-        <th mat-header-cell *matHeaderCellDef> Asignación </th>
+        <th mat-header-cell *matHeaderCellDef>Asignación</th>
         <td mat-cell *matCellDef="let t">
-          <select [value]="t.area" class="table-select-inner">
-            <option *ngFor="let a of areaOptions.slice(1)" [value]="a">{{ a }}</option>
-          </select>
+          <span class="area-chip">
+            {{ getAreaLabel(t.area) }}
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="actualizado">
-        <th mat-header-cell *matHeaderCellDef> Último Mov. </th>
+        <th mat-header-cell *matHeaderCellDef>Último Mov.</th>
         <td mat-cell *matCellDef="let t" class="date-font">
           {{ t.actualizadoEn | date:'dd/MM/yy HH:mm:ss' }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
+        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
         <td mat-cell *matCellDef="let t">
           <div class="action-buttons">
-            <button class="btn-action-tool view" (click)="open(t.id)" matTooltip="Gestionar">
+            <button
+              class="btn-action-tool view"
+              (click)="openTicket(t)"
+              [disabled]="!canOpen(t)"
+              matTooltip="Gestionar">
               <mat-icon>settings</mat-icon>
             </button>
-            <button class="btn-action-tool archive" matTooltip="Archivar">
+
+            <button
+              class="btn-action-tool archive"
+              (click)="archive(t)"
+              [disabled]="!canArchive(t)"
+              matTooltip="Archivar">
               <mat-icon>inventory_2</mat-icon>
             </button>
           </div>
