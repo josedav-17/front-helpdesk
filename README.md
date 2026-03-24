@@ -1,6 +1,6 @@
 # Front Helpdesk
 
-Plataforma de helpdesk construida con Angular 21, que incluye un portal público para la creación de tickets sin autenticación y un panel administrativo con control de acceso basado en roles (RBAC). El proyecto utiliza Server-Side Rendering (SSR) para mejorar el rendimiento y el SEO.
+Plataforma de helpdesk construida con Angular, que incluye un portal público para la creación de tickets sin autenticación y un panel administrativo con control de acceso basado en roles (RBAC). El proyecto utiliza Server-Side Rendering (SSR) para mejorar el rendimiento y el SEO.
 
 ## Características principales
 
