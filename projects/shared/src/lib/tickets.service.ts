@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 import {
   TicketCreatePayload,
@@ -15,8 +16,8 @@ import {
 })
 export class TicketsService {
   private readonly http = inject(HttpClient);
-  // private readonly baseUrl = 'https://back-helpdesk-dmep.onrender.com';
-  private readonly baseUrl = 'http://127.0.0.1:8000/api/tickets';
+
+  private readonly baseUrl = environment.apiBase + 'api/tickets';
 
   create(payload: TicketCreatePayload): Observable<TicketCreateResponse> {
     return this.http.post<TicketCreateResponse>(`${this.baseUrl}/crear`, payload);

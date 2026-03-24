@@ -222,7 +222,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.sub = this.ticketsService.dashboardMetricas().subscribe({   
       next: (resp: any[]) => {
-        console.log(resp)
         
         this.tickets = (resp ?? []) as TicketApi[];
 
@@ -462,6 +461,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   public chartClicked({ event, active }: { event?: ChartEvent, active?: object[] }): void {
-    console.log(event, active);
   }
 }

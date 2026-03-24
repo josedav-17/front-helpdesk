@@ -33,7 +33,6 @@ export class AdminLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUser();
-    console.log('USER EN LAYOUT:', this.user);
   }
 
   toggleSidebar(): void {
