@@ -12,7 +12,7 @@ import { loginGuard } from './core/auth/login-guard';
 
 export const routes: Routes = [
   {
-    path: 'login',
+    path: '',
     component: LoginComponent,
     canActivate: [loginGuard]
   },
