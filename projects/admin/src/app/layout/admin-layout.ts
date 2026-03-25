@@ -26,6 +26,7 @@ export class AdminLayoutComponent implements OnInit {
   isAdmin = false;
 
   user: any | null = null;
+  isMobileMenuOpen = false;
 
   displayName = 'Usuario';
   displayRole = 'Administrador';

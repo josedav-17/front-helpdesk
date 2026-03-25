@@ -146,3 +146,73 @@ mat-icon{
 .shell.collapsed .logo-text {
   display: none; 
 }
+
+
+
+/* --- Estilos para móviles --- */
+
+// Botón de menú oculto en desktop
+.menu-trigger {
+  display: none;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-right: 15px;
+  align-items: center;
+}
+
+// Capa de fondo oscuro
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  backdrop-filter: blur(2px);
+}
+
+@media (max-width: 768px) {
+  .menu-trigger {
+    display: flex; // Aparece en móviles
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -260px; // Escondido a la izquierda
+    top: 0;
+    bottom: 0;
+    z-index: 999;
+    width: 260px !important; // Forzamos ancho completo en móvil
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    // Forzamos que se vean los textos aunque esté marcado como 'collapsed'
+    .nav-label, .group-label, .u-meta, .logo-text {
+      display: block !important;
+    }
+    
+    .nav-item {
+      margin: 8px 16px;
+      justify-content: flex-start;
+      .icon-wrapper { margin-right: 12px; }
+    }
+  }
+
+  // Cuando el menú móvil está abierto
+  .shell.mobile-open {
+    .sidebar {
+      left: 0; // Entra a escena
+    }
+    .sidebar-overlay {
+      display: block; // Aparece el fondo oscuro
+    }
+  }
+
+  .top-nav {
+    padding: 0 15px;
+    .breadcrumb {
+      font-size: 14px;
+      mat-icon { font-size: 20px !important; }
+    }
+  }
+}

@@ -1,7 +1,10 @@
-<div class="shell" [class.collapsed]="isCollapsed">
+<div class="shell" [class.collapsed]="isCollapsed" [class.mobile-open]="isMobileMenuOpen">
+  
+  <div class="sidebar-overlay" (click)="isMobileMenuOpen = false"></div>
+
   <aside class="sidebar">
     <div class="sidebar-header">
-      <div class="logo-box" (click)="toggleSidebar()" role="button">
+      <div class="logo-box" (click)="toggleSidebar()">
         <div class="logo-icon">
           <mat-icon>school</mat-icon>
         </div>
@@ -16,33 +19,17 @@
     <nav class="nav-section">
       <div class="group-label" *ngIf="!isCollapsed">SISTEMA</div>
 
-      <a
-        class="nav-item"
-        routerLink="/dashboard"
-        routerLinkActive="active"
-        [matTooltip]="isCollapsed ? 'Dashboard' : ''"
-        matTooltipPosition="right">
+      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active" (click)="isMobileMenuOpen = false">
         <div class="icon-wrapper"><mat-icon>grid_view</mat-icon></div>
         <span class="nav-label">Dashboard</span>
       </a>
 
-      <a
-        class="nav-item"
-        routerLink="/tickets"
-        routerLinkActive="active"
-        [matTooltip]="isCollapsed ? 'Gestión de Tickets' : ''"
-        matTooltipPosition="right">
+      <a class="nav-item" routerLink="/tickets" routerLinkActive="active" (click)="isMobileMenuOpen = false">
         <div class="icon-wrapper"><mat-icon>confirmation_number</mat-icon></div>
         <span class="nav-label">Gestión de Tickets</span>
       </a>
 
-      <a
-        *ngIf="isAdmin"
-        class="nav-item"
-        routerLink="/users"
-        routerLinkActive="active"
-        [matTooltip]="isCollapsed ? 'Gestión de Usuarios' : ''"
-        matTooltipPosition="right">
+      <a *ngIf="isAdmin" class="nav-item" routerLink="/users" routerLinkActive="active" (click)="isMobileMenuOpen = false">
         <div class="icon-wrapper"><mat-icon>group</mat-icon></div>
         <span class="nav-label">Gestión de usuarios</span>
       </a>
@@ -66,6 +53,10 @@
 
   <main class="main-content">
     <header class="top-nav">
+      <button class="menu-trigger" (click)="isMobileMenuOpen = !isMobileMenuOpen">
+        <mat-icon>menu</mat-icon>
+      </button>
+
       <div class="breadcrumb">
         <mat-icon>home</mat-icon>
         <span class="sep">/</span>
