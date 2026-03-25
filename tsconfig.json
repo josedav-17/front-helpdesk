@@ -13,7 +13,8 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
-      "shared": ["./projects/shared/src/public-api.ts"]
+      "shared": ["./projects/shared/src/public-api.ts"],
+      "@env": ["./projects/environments/environment.ts"]
     },
     "importHelpers": true,
     "target": "ES2022",
