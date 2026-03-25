@@ -17,7 +17,7 @@ import {
 export class TicketsService {
   private readonly http = inject(HttpClient);
 
-  private readonly baseUrl = environment.apiBase + 'api/tickets';
+  private readonly baseUrl = environment.apiBase + '/api/tickets';
 
   create(payload: TicketCreatePayload): Observable<TicketCreateResponse> {
     return this.http.post<TicketCreateResponse>(`${this.baseUrl}/crear`, payload);

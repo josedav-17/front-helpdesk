@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export type UserRole = 'ADMIN' | 'MESA' | 'AREA' | 'USUARIO';
 
@@ -36,9 +37,10 @@ export interface UserUpdatePayload {
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   private http = inject(HttpClient);
-//   private readonly baseUrl = 'http://127.0.0.1:8000/api/tickets';
 
-  private base = 'http://127.0.0.1:8000';
+  private base = environment.apiBase;
+
+
   listUsers(): Observable<UserDto[]> {
     return this.http.get<UserDto[]>(`${this.base}/api/auth/users`);
   }
