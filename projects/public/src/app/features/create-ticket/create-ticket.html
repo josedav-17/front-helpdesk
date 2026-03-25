@@ -52,67 +52,104 @@
           <p>Completa el formulario para generar tu radicado oficial.</p>
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="submit()" class="portal-form">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="portal-form" novalidate>
           <div class="form-group-row">
-            <div class="input-field grow-2">
+            <div class="input-field grow-2" [class.invalid]="hasError('nombre')">
               <label>Nombre Completo *</label>
               <input type="text" formControlName="nombre" placeholder="Nombre y apellidos">
+              @if (hasError('nombre')) {
+                <small class="error-text">{{ getErrorMessage('nombre') }}</small>
+              }
             </div>
-            <div class="input-field grow-1">
+
+            <div class="input-field grow-1" [class.invalid]="hasError('documento')">
               <label>Documento *</label>
               <input type="text" formControlName="documento">
+              @if (hasError('documento')) {
+                <small class="error-text">{{ getErrorMessage('documento') }}</small>
+              }
             </div>
           </div>
 
           <div class="form-group-row">
-            <div class="input-field grow-2">
+            <div class="input-field grow-2" [class.invalid]="hasError('email')">
               <label>Correo Electronico *</label>
               <input type="email" formControlName="email">
+              @if (hasError('email')) {
+                <small class="error-text">{{ getErrorMessage('email') }}</small>
+              }
             </div>
-            <div class="input-field grow-1">
+
+            <div class="input-field grow-1" [class.invalid]="hasError('telefono')">
               <label>Teléfono</label>
               <input type="text" formControlName="telefono">
+              @if (hasError('telefono')) {
+                <small class="error-text">{{ getErrorMessage('telefono') }}</small>
+              }
             </div>
+
             <div class="checkbox-field">
-              <mat-checkbox formControlName="tieneWhatsapp">Usa WhatsApp</mat-checkbox>
+              <mat-checkbox formControlName="tieneWhatsapp">Tengo WhatsApp</mat-checkbox>
             </div>
           </div>
 
-          <div class="input-field full-width">
+          <div class="input-field full-width" [class.invalid]="hasError('empresaDepartamento')">
             <label>Facultad, Dependencia o Empresa *</label>
             <input type="text" formControlName="empresaDepartamento">
+            @if (hasError('empresaDepartamento')) {
+              <small class="error-text">{{ getErrorMessage('empresaDepartamento') }}</small>
+            }
           </div>
 
           <div class="spacer-line"></div>
 
           <div class="form-group-row">
-            <div class="input-field grow-1">
+            <div class="input-field grow-1" [class.invalid]="hasError('tipo')">
               <label>Tipo de Solicitud *</label>
               <select formControlName="tipo">
                 <option value="SOLICITUD">Solicitud</option>
                 <option value="INCIDENTE">Incidente</option>
                 <option value="QUEJA">Queja / Reclamo</option>
               </select>
+              @if (hasError('tipo')) {
+                <small class="error-text">{{ getErrorMessage('tipo') }}</small>
+              }
             </div>
-            <div class="input-field grow-1">
+
+            <div class="input-field grow-1" [class.invalid]="hasError('categoria')">
               <label>Categoría *</label>
               <input type="text" formControlName="categoria" placeholder="Ej: Plataforma Académica">
+              @if (hasError('categoria')) {
+                <small class="error-text">{{ getErrorMessage('categoria') }}</small>
+              }
             </div>
           </div>
 
-          <div class="input-field full-width">
+          <div class="input-field full-width" [class.invalid]="hasError('asunto')">
             <label>Asunto del caso *</label>
             <input type="text" formControlName="asunto" class="asunto-bold">
+            @if (hasError('asunto')) {
+              <small class="error-text">{{ getErrorMessage('asunto') }}</small>
+            }
           </div>
 
-          <div class="input-field full-width">
+          <div class="input-field full-width" [class.invalid]="hasError('descripcion')">
             <label>Descripción detallada *</label>
             <textarea formControlName="descripcion" rows="5"></textarea>
+            @if (hasError('descripcion')) {
+              <small class="error-text">{{ getErrorMessage('descripcion') }}</small>
+            }
           </div>
 
           <div class="form-footer">
-            <button type="button" class="btn-ghost" (click)="form.reset()">LIMPIAR</button>
-            <button type="submit" class="btn-iud-red" [disabled]="loading || form.invalid">
+            <button
+              type="button"
+              class="btn-ghost"
+              (click)="form.reset({ tipo: 'SOLICITUD', tieneWhatsapp: false, areaAsignada: 'MESA' })">
+              LIMPIAR
+            </button>
+
+            <button type="submit" class="btn-iud-red" [disabled]="loading">
               @if (loading) { PROCESANDO... } @else { ENVIAR SOLICITUD }
             </button>
           </div>

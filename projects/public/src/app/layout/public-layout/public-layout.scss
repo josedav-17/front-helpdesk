@@ -1,28 +1,110 @@
-.main-toolbar {
-  background-color: #01415B !important;
-  color: white !important;
+$text-main: #1e293b;
+$text-muted: #64748b;
+$accent: #2563eb;
+$border: #f1f5f9;
+$bg-body: #f8fafc;
+$navy-deep: #051c2c;
+
+.navbar {
   height: 64px;
-  display: flex;
-  justify-content: center;
-
-  .toolbar-container {
-    width: 100%;
-    max-width: 1200px;
-    display: flex;
-    align-items: center;
-  }
-}
-
-.brand {
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.spacer {
-  flex: 1 1 auto;
+  background: radial-gradient(circle at 50% 0%, #0a2d47 0%, $navy-deep 70%);
+  color: $text-main;
+  border-bottom: 1px solid $border;
+  padding: 0;
 }
 
 .container {
-  max-width: 980px;
-  margin: 24px auto;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  .brand-dot {
+    width: 12px;
+    height: 12px;
+    background-color: grey;
+    border-radius: 3px;
+    transform: rotate(45deg);
+  }
+
+  .brand-name {
+    font-size: 1.15rem;
+    letter-spacing: -0.5px;
+    color: white;
+    
+    .bold { font-weight: 800; }
+  }
+}
+
+.spacer { flex: 1; }
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+
+  .nav-item {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: $text-muted;
+    height: 40px;
+    border-radius: 8px;
+    padding: 0 16px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #f1f5f9;
+      color: $text-main;
+    }
+  }
+
+  .active {
+    background-color: rgba($accent, 0.05) !important;
+    color: $accent !important;
+    font-weight: 600;
+  }
+}
+
+.status-indicator {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 20px;
+  border-left: 1px solid $border;
+
+  .status-text {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+    animation: pulse 2s infinite;
+  }
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+
+@media (max-width: 768px) {
+  .status-indicator { display: none; }
 }

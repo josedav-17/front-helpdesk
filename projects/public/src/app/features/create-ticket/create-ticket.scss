@@ -1,11 +1,40 @@
 $iud-dark: #051c2c;
 $iud-red: #d32f2f;
 $iud-cyan: #00bcd4;
+$navy: #051c2c;
 
 .iud-portal-container {
+  $navy: #051c2c;
+  background: radial-gradient(circle at 50% 0%, #0a2d47 0%, $navy 70%);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    width: 20%;
+    height: 15px;
+    background: #ff3131;
+    box-shadow: 0 0 5px 2px #ff3131;
+    z-index: 1;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    right: 0%;
+    width: 20%;
+    height: 15px;
+    background: #ffde59;
+    box-shadow: 0 0 5px 2px #ffde59;
+    z-index: 1;
+  }
+
+
   width: 100%;
   min-height: 100vh;
-  background: $iud-dark;
   color: white;
   font-family: 'Montserrat', sans-serif;
 }
@@ -13,7 +42,7 @@ $iud-cyan: #00bcd4;
 .hero-form-section {
   max-width: 850px;
   margin: 0 auto;
-  padding: 60px 20px;
+  padding: 40px 20px;
 }
 
 .fade-in {
@@ -25,9 +54,9 @@ $iud-cyan: #00bcd4;
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* FORM STYLES */
 .hero-text {
   margin-bottom: 40px;
+  text-align: center;
   h1 { font-size: 2.2rem; font-weight: 800; margin: 0; }
   p { opacity: 0.6; margin-top: 8px; }
 }
@@ -117,4 +146,12 @@ $iud-cyan: #00bcd4;
   button { padding: 14px 25px; border-radius: 6px; font-weight: 700; cursor: pointer; border: none; }
   .btn-primary { background: $iud-cyan; color: $iud-dark; }
   .btn-secondary { background: rgba(255,255,255,0.1); color: white; }
+}
+
+.error-text{
+  margin: 5px;
+}
+
+.checkbox-field{
+  align-content: center;
 }
