@@ -1,4 +1,3 @@
-// Paleta Grises Minimalistas (Neutros)
 $gray-white: #ffffff;
 $gray-light: #f5f5f5;
 $gray-border: #e5e5e5;
@@ -14,10 +13,10 @@ $accent-orange: #f97316;
   font-family: 'Inter', sans-serif;
 }
 
-// SIDEBAR: Degradado de Gris Blanco a Gris Suave
 .sidebar {
   width: 260px;
-  background: #01415B;
+  $navy: #051c2c;
+  background: radial-gradient(circle at 50% 0%, #0a2d47 0%, $navy 70%);
   color: $gray-text-dark;
   display: flex;
   flex-direction: column;
@@ -70,7 +69,7 @@ $accent-orange: #f97316;
   }
 }
 
-// FOOTER
+
 .sidebar-footer {
   padding: 20px; border-top: 1px solid rgba(0,0,0,0.05);
   .user-pill {
@@ -92,14 +91,17 @@ $accent-orange: #f97316;
   &:hover { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
 }
 
-// MAIN CONTENT
+
 .main-content {
   flex: 1; background: $gray-white; display: flex; flex-direction: column;
 }
 
 .top-nav {
   height: 60px; padding: 0 30px; display: flex; align-items: center;
-  background: #01415B; border-bottom: 1px solid $gray-border;
+  $navy: #051c2c;
+  background: radial-gradient(circle at 50% 0%, #0a2d47 0%, $navy 70%);
+  
+  border-bottom: 1px solid $gray-border;
   .breadcrumb {
     display: flex; align-items: center; gap: 8px; color: $gray-text-soft; font-size: 16px;
     .current { color: $gray-text-dark; font-weight: 700; }
@@ -125,7 +127,6 @@ mat-icon{
 .logo-text {
   font-weight: 600;
   font-size: 1.15rem;
-  color: grey;
   letter-spacing: -0.5px;
   display: flex;
   align-items: center;

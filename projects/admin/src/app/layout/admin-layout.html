@@ -17,7 +17,7 @@
     </div>
 
     <nav class="nav-section">
-      <div class="group-label" *ngIf="!isCollapsed">SISTEMA</div>
+      <div class="group-label" *ngIf="!isCollapsed">Menú principal</div>
 
       <a class="nav-item" routerLink="/dashboard" routerLinkActive="active" (click)="isMobileMenuOpen = false">
         <div class="icon-wrapper"><mat-icon>grid_view</mat-icon></div>
@@ -57,11 +57,16 @@
         <mat-icon>menu</mat-icon>
       </button>
 
+
+      
       <div class="breadcrumb">
         <mat-icon>home</mat-icon>
-        <span class="sep">/</span>
-        <span class="current">Tickets</span>
+        @for (item of breadcrumbs; track item; let last = $last) {
+        <span class="sep"> <mat-icon>chevron_right</mat-icon> </span>
+        <span class="current">{{ item }}</span>
+        } 
       </div>
+      
     </header>
 
     <div class="viewport">

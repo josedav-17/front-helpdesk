@@ -1,8 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { filter } from 'rxjs/operators';
+
 import { AuthService } from '../core/auth/auth.service';
 
 @Component({
@@ -21,19 +23,40 @@ import { AuthService } from '../core/auth/auth.service';
 })
 export class AdminLayoutComponent implements OnInit {
   private auth = inject(AuthService);
+  private router = inject(Router);
 
   isCollapsed = false;
   isAdmin = false;
-
   user: any | null = null;
   isMobileMenuOpen = false;
-
+  breadcrumbs: string[] = [];
   displayName = 'Usuario';
   displayRole = 'Administrador';
   displayEmail = '';
 
   ngOnInit(): void {
+    this.buildBreadcrumbs(this.router.url);
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.buildBreadcrumbs(this.router.url);
+      });
+
     this.loadUser();
+  }
+
+  private buildBreadcrumbs(url: string): void {
+    this.breadcrumbs = url
+      .split('/')
+      .filter(segment => segment)
+      .map(segment => this.format(segment));
+  }
+
+  private format(text: string): string {
+    return text
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, l => l.toUpperCase());
   }
 
   toggleSidebar(): void {
@@ -81,7 +104,7 @@ export class AdminLayoutComponent implements OnInit {
   private mapRole(role?: string): string {
     if (!role) return '';
 
-    switch ((role || '').trim().toUpperCase()) {
+    switch (role.trim().toUpperCase()) {
       case 'ADMIN':
         return 'Administrador';
       case 'SUPERADMIN':

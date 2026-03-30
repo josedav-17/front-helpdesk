@@ -13,6 +13,11 @@ import { loginGuard } from './core/auth/login-guard';
 export const routes: Routes = [
   {
     path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
+  {
+    path: 'login',
     component: LoginComponent,
     canActivate: [loginGuard]
   },
@@ -21,7 +26,6 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'users', component: UsersManagementComponent },
       { path: 'tickets', component: TicketsListComponent },
